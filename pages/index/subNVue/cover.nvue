@@ -1,0 +1,34 @@
+<template>
+	<view @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd">
+	
+	</view>
+</template>
+
+<script>
+	export default {
+		data(){
+			return{ 
+				
+			}
+		},
+		created() {
+		},
+		methods:{
+			ListTouchStart(e){
+				uni.$emit('ListTouchStart',e); 
+			},
+			ListTouchMove(e){
+				uni.$emit('ListTouchMove',e); 
+			},
+			ListTouchEnd(){
+				uni.$emit('ListTouchEnd'); 
+			}
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+.cover-view{
+	
+}
+</style>
