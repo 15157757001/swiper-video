@@ -1,6 +1,11 @@
 <template>
-	<view @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd">
-	
+	<view @click="tapCover" @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" class="cover">
+		<view class="cover-view-right">
+			<view class="cover-view-right-box" @click.stop="tapAvater"></view>
+			<view class="cover-view-right-box" @click.stop="tapLove"></view>
+			<view class="cover-view-right-box" @click.stop="tapMsg"></view>
+			<view class="cover-view-right-box" @click.stop="tapShare"></view>
+		</view>
 	</view>
 </template>
 
@@ -22,13 +27,40 @@
 			},
 			ListTouchEnd(){
 				uni.$emit('ListTouchEnd'); 
-			}
+			},
+			tapLove(){
+				uni.$emit('tapLove'); 
+			},
+			tapMsg(){
+				uni.$emit('tapMsg'); 
+			},
+			tapShare(){
+				uni.$emit('tapShare'); 
+			},
+			tapCover(){
+				uni.$emit('tapCover'); 
+			},
+			tapAvater(){
+				uni.$emit('tapAvater'); 
+			},
 		}
 	}
 </script>
 
-<style lang="scss" scoped>
-.cover-view{
-	
+<style scoped>
+.cover{
+	position: relative;
+}
+.cover-view-right{
+	position: absolute;
+	bottom: 100upx;
+	right: 0;
+	margin-right: 10upx;
+	color: #FFFFFF;
+	flex-direction: column;
+}
+.cover-view-right-box{
+	width: 80upx;
+	height: 80upx;
 }
 </style>
