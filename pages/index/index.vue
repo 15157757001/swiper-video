@@ -36,7 +36,7 @@
 						content:'456',
 						flag:false,
 						check:false,
-						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg'
+						avater:'../../static/logo.png'
 					},
 					{
 						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=167057&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
