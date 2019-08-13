@@ -1,12 +1,12 @@
 <template>
-	<view @click="tapCover" @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" class="cover">
-		<view class="cover-view-right">
-			<view class="cover-view-right-box" @click.stop="tapAvater"></view>
-			<view class="cover-view-right-box" @click.stop="tapLove"></view>
-			<view class="cover-view-right-box" @click.stop="tapMsg"></view>
-			<view class="cover-view-right-box" @click.stop="tapShare"></view>
-		</view>
-	</view>
+	<div @tap="tapCover" @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" class="cover">
+		<div class="cover-view-right">
+			<div class="cover-view-right-box" @click.stop="tapAvater"></div>
+			<div class="cover-view-right-box" @click.stop="tapLove"></div>
+			<div class="cover-view-right-box" @click.stop="tapMsg"></div>
+			<div class="cover-view-right-box" @click.stop="tapShare"></div>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -20,6 +20,7 @@
 		},
 		methods:{
 			ListTouchStart(e){
+				console.log(321)
 				uni.$emit('ListTouchStart',e); 
 			},
 			ListTouchMove(e){
@@ -38,6 +39,7 @@
 				uni.$emit('tapShare'); 
 			},
 			tapCover(){
+				console.log(2321)
 				uni.$emit('tapCover'); 
 			},
 			tapAvater(){
@@ -50,6 +52,7 @@
 <style scoped>
 .cover{
 	position: relative;
+	background-color: red;
 }
 .cover-view-right{
 	position: absolute;
@@ -62,5 +65,6 @@
 .cover-view-right-box{
 	width: 80upx;
 	height: 80upx;
+	background-color: red;
 }
 </style>

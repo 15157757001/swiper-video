@@ -1,13 +1,12 @@
 <template>
-    <view class="page">
+    <view class="page" :style="heightStyle">
 		<view class="video-view" :style="containerStyle">
 			<video class="video" :id="`video_${index}`" :key="index" :data-id = "index"
-				:src="item.src" controls v-for="(item,index) in videoList"
-				@tapVideo="videoPlay(index)"
+				:src="item.src" controls v-for="(item,index) in videoList" :style="heightStyle"
+				@tap="videoPlay(index)"
 				@touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd">
 				<cover-view class="cover-view-left">
 					{{item.content}}
-					<input placeholder="说说你的看法" /> 
 				</cover-view>
 				<cover-image class="avater img" @tap.stop="tapAvater" :src="item.avater"></cover-image>
 				<cover-image class="aixin img" @tap.stop="tapLove" :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'"></cover-image>
@@ -53,17 +52,21 @@
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg'
 					},
 				],
+				heightStyle:'height:667px'
 			}
         },
 		onLoad(){
-			this.sysheight = uni.getSystemInfoSync().windowHeight
+			this.sysheight = uni.getSystemInfoSync().windowHeight 
+			this.heightStyle = `height:${this.sysheight}px` 
 		},
         async mounted() {
 			//#ifdef APP-PLUS
-			const subNVue = uni.getSubNVueById('concat')  
+			const subNVue = uni.getSubNVueById('concat') 
+			plus.screen.lockOrientation("portrait-primary")
 			// 打开 nvue 子窗体  
 			subNVue.show('slide-in-left', 100, ()=>{  
 				uni.$on('ListTouchStart', (e)=>{
+					console.log(e)
 					this.listTouchStartY = e.changedTouches[0].pageY
 				})
 				uni.$on('ListTouchMove', (e)=>{
@@ -95,6 +98,9 @@
 			});  
 			//#endif
         },
+		onUnload() {
+			
+		},
         methods: {
 			pushVideoList(){
 				let promise = new Promise((resolve,reject)=>{
@@ -228,7 +234,7 @@
 <style lang="scss" scoped>
     .video {
     	width: 100%;
-    	height: 100vh;
+    	
 		position: relative;
 		display: block;
     }
@@ -284,7 +290,7 @@
 		width: 80upx;
 	}
 	.page{
-		height: 100vh;
+	
 		overflow: hidden;
 		
 	}

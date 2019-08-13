@@ -1,0 +1,174 @@
+<template>
+    <div class="page">
+		<swiper
+			class="swiper"
+			:vertical="true"
+			@change="changeCurrent"
+			:style="{ height: height }"
+			:current="index">
+			<swiper-item v-for="(item, index) in videoList" :key="index">
+				<chunlei-video @click="clickVideo"
+					class="video" :src="item.src" :style="{ height: height }" :play="item.flag">
+				</chunlei-video>
+				<cover-view class="cover-view-left">
+					<text class="left-text">{{item.content}}</text>
+				</cover-view>
+				<cover-view class="cover-view-right">
+					<image :src="item.avater" class="avater img" @click.stop="tapAvater"></image>
+					<image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></image>
+					<image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></image>
+					<image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></image>
+				</cover-view>
+			</swiper-item>
+		</swiper>
+    </div>
+</template>
+<script>
+	import chunleiVideo from '../../components/chunlei-video/chunlei-video.vue'
+    export default {
+		components:{
+			chunleiVideo
+		},
+        data() {
+            return {
+				sysheight:0,
+				videoList:[
+					{
+						src:'https://dcloud-img.oss-cn-hangzhou.aliyuncs.com/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20181126.mp4',
+						content:'456',
+						flag:false,
+						check:false,
+						avater:'../../static/logo.png'
+					},
+					{
+						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=167057&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
+						content:'123',
+						flag:false,
+						check:true,
+						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg'
+					},
+					{
+						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=167805&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
+						content:'789',
+						flag:false,
+						check:false,
+						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg'
+					},
+				],
+				height:'667px',
+				index:0,
+				width:''
+			}
+        },
+		created(){
+			//#ifdef APP-PLUS
+			plus.screen.lockOrientation("portrait-primary")
+			//#endif
+			this.sysheight = uni.getSystemInfoSync().windowHeight
+			this.height = `${this.sysheight}px` 
+			let width = uni.getSystemInfoSync().width 
+			this.width = `${width}px` 
+			this.pushVideoList().then(res=>{})
+		},
+        methods: {
+			changeCurrent(e){
+				this.index = e.detail.current;
+				for (let item of this.videoList) {
+					item.flag = false
+				}
+				this.videoList[this.index].flag = !this.videoList[this.index].flag
+			},
+			pushVideoList(){
+				let promise = new Promise((resolve,reject)=>{
+					uni.request({
+						url: 'https://api.apiopen.top/videoRecommend?id=127397',
+						success: (res) => {
+							let videoGroup = []
+							for (let item of res.data.result) {
+								if(item.type == 'videoSmallCard'){
+									videoGroup.push({
+										src:item.data.playUrl,
+										content:item.data.description,
+										flag:false,
+										check:false,
+										avater:item.data.author.icon
+									})
+								}
+							}
+							this.videoList = [...this.videoList,...videoGroup]
+							resolve()
+						}
+					})
+				}) 
+				return promise
+			},
+			tapLove(){
+				this.videoList[this.index].check = !this.videoList[this.index].check
+				this.videoList = [...this.videoList]
+			},
+			tapAvater(){
+				uni.showToast({
+					icon:'none',
+					title:`点击索引为${this.index}的头像`
+				})
+			},
+			tapMsg(){
+				uni.showToast({
+					icon:'none',
+					title:`查看索引为${this.index}的评论`
+				})
+			},
+			tapShare(){
+				uni.showToast({
+					icon:'none',
+					title:`分享索引为${this.index}的视频`
+				})
+			},
+			tapPlay(){
+				this.videoList[this.index].flag = !this.videoList[this.index].flag
+			},
+			clickVideo(){
+				this.videoList[this.index].flag = !this.videoList[this.index].flag
+			}
+        }
+    }
+</script>
+<style scoped>
+	.swiper{
+	
+	}
+    .video {
+		
+    }
+	.cover-view-center{
+		position: absolute;
+	}
+	.cover-view-left{
+		position: absolute;
+		margin-left: 10upx;
+		width: 400upx;
+		bottom: 100upx;
+	}
+	.left-text{
+		font-size: 14px;
+		color: #FFFFFF;
+	}
+	.avater{
+		border-radius: 40upx;
+	}
+	.cover-view-right{
+		position: absolute;
+		bottom: 80upx;
+		margin-right: 20upx;
+		right: 0;
+	}
+	.img{
+		height: 80upx;
+		width: 80upx;
+	
+	}
+	.page{
+		
+	}
+	
+</style>
