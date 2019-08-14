@@ -1,7 +1,7 @@
 # scroll-video
 uniapp仿抖音视频滑动效果
 # 说明
-插件分别在uni-app编译模式下实现效果。
+插件在uni-app编译模式下实现效果。
 
 默认为weex编译模式，在 manifest.json 的源码视图里配置是切换模式， manifest.json -> app-plus -> nvueCompiler 切换编译模式。
 # 1.0.0更新内容
