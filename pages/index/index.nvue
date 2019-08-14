@@ -7,8 +7,12 @@
 			:style="{ height: height }"
 			:current="index">
 			<swiper-item v-for="(item, index) in videoList" :key="index">
-				<chunlei-video @click="clickVideo" class="video" :src="item.src" :style="{ height: height }" :play="item.flag" @click.stop="tapPlay">
+				<chunlei-video @click="clickVideo" class="video" :src="item.src" :style="{ height: height,width: width }" :play="item.flag" @click.stop="tapPlay">
 				</chunlei-video>
+				
+				<cover-view class="cover-view-center" :style="{ height: height,width: width }">
+					
+				</cover-view>
 				<cover-view class="cover-view-left">
 					<text class="left-text">{{item.content}}</text>
 				</cover-view>
@@ -65,7 +69,7 @@
 			//#endif
 			this.sysheight = uni.getSystemInfoSync().windowHeight
 			this.height = `${this.sysheight}px` 
-			let width = uni.getSystemInfoSync().width 
+			let width = uni.getSystemInfoSync().windowWidth 
 			this.width = `${width}px` 
 			this.pushVideoList().then(res=>{})
 		},
@@ -138,9 +142,11 @@
 		
     }
 	.cover-view-center{
+		position: absolute;
 		justify-content: center;
 		align-items: center;
-		
+		opacity: 0.1;
+		z-index: 999;
 	}
 	.cover-view-left{
 		position: absolute;

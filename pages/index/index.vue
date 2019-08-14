@@ -7,7 +7,7 @@
 			:style="{ height: height }"
 			:current="index">
 			<swiper-item v-for="(item, index) in videoList" :key="index">
-				<chunlei-video @click="clickVideo" class="video" :src="item.src" :style="{ height: height }" :play="item.flag">
+				<chunlei-video @click="clickVideo" class="video" :src="item.src" :style="{ height: height,width: width }" :play="item.flag">
 				</chunlei-video>
 				
 				<cover-view class="cover-view-left">
