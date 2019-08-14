@@ -20,7 +20,6 @@
 		},
 		methods:{
 			ListTouchStart(e){
-				console.log(321)
 				uni.$emit('ListTouchStart',e); 
 			},
 			ListTouchMove(e){
@@ -39,7 +38,6 @@
 				uni.$emit('tapShare'); 
 			},
 			tapCover(){
-				console.log(2321)
 				uni.$emit('tapCover'); 
 			},
 			tapAvater(){
@@ -52,7 +50,7 @@
 <style scoped>
 .cover{
 	position: relative;
-	background-color: red;
+	
 }
 .cover-view-right{
 	position: absolute;
@@ -65,6 +63,5 @@
 .cover-view-right-box{
 	width: 80upx;
 	height: 80upx;
-	background-color: red;
 }
 </style>

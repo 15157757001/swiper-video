@@ -1,7 +1,7 @@
 <template>
 	<video :src="src" :controls="false" :show-play-btn="false" 
 		:enable-progress-gesture="false" @click="clickVideo"
-		id="video" ref="video"></video>
+		id="video" ref="video" class="video"></video>
 </template>
 
 <script>
@@ -44,4 +44,8 @@
 </script>
 
 <style>
+	.video{
+		width: 100%;
+		height: 100%;
+	}
 </style>

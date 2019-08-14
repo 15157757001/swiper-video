@@ -1,28 +1,10 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/nvue/index",
-			"style": {  
-				"navigationBarTitleText": "nvue+vue"
-			}  
-		},
-		{
 			"path": "pages/index/index",
-			"style": {  
-				"navigationBarTitleText": "subNVue+vue",
-				"app-plus": {  
-					"subNVues":[{ 
-						"id": "concat", // 唯一标识  
-						"path": "pages/index/subNVue/cover", // 页面路径  
-						"style": {  
-							"position": "absolute",
-							"height": "100%",
-							"width": "100%",
-							"background": "rgba(0,0,0,0)"
-						}  
-					}]  
-				}  
-			}  
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
 		}
 	],
 	"globalStyle": {
@@ -30,21 +12,5 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
-	},
-	"tabBar": {
-		"borderStyle": "black",
-		"backgroundColor": "#ffffff",
-		"color": "#8F8F94",
-		"selectedColor": "#1afa29",
-		"list": [
-			{
-				"pagePath": "pages/index/index",
-				"text": "subNVue"
-			},
-			{
-				"pagePath": "pages/nvue/index",
-				"text": "nvue"
-			}
-		]
 	}
 }

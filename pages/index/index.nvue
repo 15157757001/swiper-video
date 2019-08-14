@@ -1,5 +1,5 @@
 <template>
-    <view class="page">
+    <div class="page">
 		<swiper
 			class="swiper"
 			:vertical="true"
@@ -7,21 +7,20 @@
 			:style="{ height: height }"
 			:current="index">
 			<swiper-item v-for="(item, index) in videoList" :key="index">
-				<chunlei-video @click="clickVideo" class="video" :src="item.src" :style="{ height: height }" :play="item.flag">
+				<chunlei-video @click="clickVideo" class="video" :src="item.src" :style="{ height: height }" :play="item.flag" @click.stop="tapPlay">
 				</chunlei-video>
-				
 				<cover-view class="cover-view-left">
-					{{item.content}}
+					<text class="left-text">{{item.content}}</text>
 				</cover-view>
 				<cover-view class="cover-view-right">
-					<cover-image :src="item.avater" class="avater img" @tap.stop="tapAvater"></cover-image>
-					<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></cover-image>
-					<cover-image src="../../static/xiaoxi.png" class="img" @tap.stop="tapMsg"></cover-image>
-					<cover-image src="../../static/share-fill.png" class="img" @tap.stop="tapShare"></cover-image>
+					<image :src="item.avater" class="avater img" @click.stop="tapAvater"></image>
+					<image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></image>
+					<image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></image>
+					<image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></image>
 				</cover-view>
 			</swiper-item>
 		</swiper>
-    </view>
+    </div>
 </template>
 <script>
 	import chunleiVideo from '../../components/chunlei-video/chunlei-video.vue'
@@ -136,8 +135,7 @@
 	
 	}
     .video {
-		width: 100%;
-		height: 100%;
+		
     }
 	.cover-view-center{
 		justify-content: center;
@@ -147,13 +145,8 @@
 	.cover-view-left{
 		position: absolute;
 		margin-left: 10upx;
-		width: 500upx;
+		width: 400upx;
 		bottom: 100upx;
-		color: #FFFFFF;
-		font-size: 14px;
-		white-space: pre-wrap;  
-		text-overflow:ellipsis;
-		overflow:hidden;
 	}
 	.left-text{
 		font-size: 14px;
@@ -167,8 +160,6 @@
 		bottom: 80upx;
 		margin-right: 20upx;
 		right: 0;
-		display: flex;
-		flex-direction: column;
 	}
 	.img{
 		height: 80upx;
