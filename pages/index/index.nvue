@@ -10,7 +10,7 @@
 				<chunlei-video class="video" :src="item.src" :style="{ height: height,width: width }" :play="item.flag">
 				</chunlei-video>
 				
-				<cover-view class="cover-view-center" :style="{ height: height,width: width }" @click="clickVideo">
+				<cover-view class="cover-view-center" :style="{ height: height,width: width }">
 					
 				</cover-view>
 				<cover-view class="cover-view-left">
@@ -76,7 +76,10 @@
 			this.height = `${this.sysheight}px` 
 			let width = uni.getSystemInfoSync().windowWidth 
 			this.width = `${width}px` 
-			this.pushVideoList().then(res=>{})
+		},
+		async mounted() {
+			await this.pushVideoList()
+			this.videoPlay(this.index)
 		},
         methods: {
 			changeCurrent(e){
@@ -132,9 +135,17 @@
 					title:`分享索引为${this.index}的视频`
 				})
 			},
-			clickVideo(){
-				this.videoList[this.index].flag = !this.videoList[this.index].flag
+			videoPlay(index){
+				let promise = new Promise((resolve,reject)=>{
+					resolve()
+				})
+				promise.then(res=>{
+					this.videoList[index].flag = !this.videoList[index].flag
+				})
 			}
+			// clickVideo(){
+			// 	this.videoList[this.index].flag = !this.videoList[this.index].flag
+			// }
         }
     }
 </script>
