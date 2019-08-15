@@ -7,20 +7,25 @@
 			:style="{ height: height }"
 			:current="index">
 			<swiper-item v-for="(item, index) in videoList" :key="index">
-				<chunlei-video @click="clickVideo" class="video" :src="item.src" :style="{ height: height,width: width }" :play="item.flag" @click.stop="tapPlay">
+				<chunlei-video class="video" :src="item.src" :style="{ height: height,width: width }" :play="item.flag">
 				</chunlei-video>
 				
-				<cover-view class="cover-view-center" :style="{ height: height,width: width }">
+				<cover-view class="cover-view-center" :style="{ height: height,width: width }" @click="clickVideo">
 					
 				</cover-view>
 				<cover-view class="cover-view-left">
+					<!-- #ifdef APP-PLUS-NVUE-->
 					<text class="left-text">{{item.content}}</text>
+					<!-- #endif -->
+					<!-- #ifndef APP-PLUS-NVUE-->
+					{{item.content}}
+					<!-- #endif -->
 				</cover-view>
 				<cover-view class="cover-view-right">
-					<image :src="item.avater" class="avater img" @click.stop="tapAvater"></image>
-					<image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></image>
-					<image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></image>
-					<image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></image>
+					<cover-image :src="item.avater" class="avater img" @click.stop="tapAvater"></cover-image>
+					<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></cover-image>
+					<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></cover-image>
+					<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
 				</cover-view>
 			</swiper-item>
 		</swiper>
@@ -88,8 +93,7 @@
 						success: (res) => {
 							let videoGroup = []
 							for (let item of res.data.result) {
-								//限制5条
-								if(item.type == 'videoSmallCard'&&videoGroup.length<8){
+								if(item.type == 'videoSmallCard'){
 									videoGroup.push({
 										src:item.data.playUrl,
 										content:item.data.description,
@@ -153,6 +157,14 @@
 		margin-left: 10upx;
 		width: 400upx;
 		bottom: 100upx;
+		z-index: 9999;
+		font-size: 14px;
+		color: #FFFFFF;
+		//#ifndef APP-PLUS-NVUE
+		white-space: pre-wrap;  
+		text-overflow:ellipsis;
+		overflow:hidden;
+		//#endif
 	}
 	.left-text{
 		font-size: 14px;
@@ -161,12 +173,19 @@
 	.avater{
 		border-radius: 40upx;
 	}
+	
 	.cover-view-right{
 		position: absolute;
 		bottom: 80upx;
 		margin-right: 20upx;
 		right: 0;
+		//#ifndef APP-PLUS-NVUE
+		display: flex;
+		flex-direction: column;
+		//#endif
+		z-index: 9999;
 	}
+	
 	.img{
 		height: 80upx;
 		width: 80upx;
