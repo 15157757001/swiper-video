@@ -81,7 +81,7 @@
 			this.width = `${width}px` 
 		},
 		async mounted() {
-			//await this.pushVideoList()
+			await this.pushVideoList()
 			this.videoPlay(this.index)
 		},
         methods: {

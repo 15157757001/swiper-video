@@ -1,18 +1,21 @@
 <template>
-    <div class="page">
-		<swiper
-			class="swiper"
-			:vertical="true"
-			@change="changeCurrent"
-			:style="{ height: height }"
-			:current="index">
-			<swiper-item v-for="(item, index) in videoList" :key="index" class="swiper-item">
+	<div class="page" :style="{ height: height }">
+		<div class="swiper" :style="containerStyle">
+			<cover-view class="cover-view-center">
+				<div :style="{ height: height,width: width }" @click="clickVideo"
+					@touchmove="ListTouchMove" @touchend="ListTouchEnd"
+					@touchstart="ListTouchStart">
+					<div class="cover-div-right">
+						<image class="avater img" @click.stop="tapAvater"></image>
+						<image class="img" @click.stop="tapLove"></image>
+						<image class="img" @click.stop="tapMsg"></image>
+						<image class="img" @click.stop="tapShare"></image>
+					</div>
+				</div>
+			</cover-view>
+			<block v-for="(item, index) in videoList" :key="index">
 				<chunlei-video class="video" :src="item.src"  :height="height" :width="width" :duration="item.duration" :play="item.flag">
 				</chunlei-video>
-				
-				<cover-view class="cover-view-center" :style="{ height: height,width: width }">
-					
-				</cover-view>
 				<cover-view class="cover-view-left">
 					<!-- #ifdef APP-PLUS-NVUE-->
 					<text class="left-text">{{item.content}}</text>
@@ -27,19 +30,29 @@
 					<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></cover-image>
 					<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
 				</cover-view>
-			</swiper-item>
-		</swiper>
-    </div>
+			</block>
+		</div>
+	
+	</div>
 </template>
+
 <script>
 	import chunleiVideo from '../../components/chunlei-video/chunlei-video.vue'
-    export default { 
+	export default { 
 		components:{
 			chunleiVideo
 		},
-        data() {
-            return {
+		data(){
+			return{
+				height:'667px',
+				index:0,
+				width:'',
 				sysheight:0,
+				containerStyle:'',
+				distance:0,
+				listTouchStartY: 0,
+				listTouchDirection: null,
+				scroll:false,
 				videoList:[
 					{
 						src:'https://dcloud-img.oss-cn-hangzhou.aliyuncs.com/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20181126.mp4',
@@ -65,12 +78,9 @@
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
 						duration:191
 					},
-				],
-				height:'667px',
-				index:0,
-				width:''
+				]
 			}
-        },
+		},
 		created(){
 			//#ifdef APP-PLUS
 			plus.screen.lockOrientation("portrait-primary")
@@ -81,19 +91,10 @@
 			this.width = `${width}px` 
 		},
 		async mounted() {
-			//#ifndef MP-WEIXIN
 			await this.pushVideoList()
-			//#endif
 			this.videoPlay(this.index)
 		},
-        methods: {
-			changeCurrent(e){
-				this.index = e.detail.current;
-				for (let item of this.videoList) {
-					item.flag = false
-				}
-				this.videoList[this.index].flag = !this.videoList[this.index].flag
-			},
+		methods:{
 			pushVideoList(){
 				let promise = new Promise((resolve,reject)=>{
 					uni.request({
@@ -118,6 +119,75 @@
 				}) 
 				return promise
 			},
+			clickVideo(){
+				this.videoList[this.index].flag = !this.videoList[this.index].flag
+			},
+			// ListTouch触摸开始
+			ListTouchStart(e) {
+				this.listTouchStartY = e.changedTouches[0].pageY
+			},
+			// ListTouch计算方向
+			ListTouchMove(e) {
+				//该视频向上
+				this.listTouchDirection = this.listTouchStartY - e.changedTouches[0].pageY > 10 ? -1 : 0
+				//该视频向下
+				this.listTouchDirection = e.changedTouches[0].pageY - this.listTouchStartY > 10 ?  1 : this.listTouchDirection
+				const distance = this.distance + e.changedTouches[0].pageY - this.listTouchStartY
+				if(distance>0) return
+				//判定为点击
+				if(Math.abs(this.listTouchStartY - e.changedTouches[0].pageY)<2){
+					this.listTouchDirection = null
+				}
+			},
+			// ListTouch计算滚动
+			async ListTouchEnd(e) {
+				if(this.scroll) return
+				
+				
+				//点击
+				if(!this.listTouchDirection){
+					
+					return
+				}
+				const destination = this.listTouchDirection*this.sysheight+this.distance
+				//不允许滚动出列表
+				if(destination>0||destination<-this.sysheight*(this.videoList.length-1)) return
+				this.videoList[this.index].flag = false
+				//开始滚动
+				await this.animate(destination, this.listTouchDirection)
+				this.index = this.index - this.listTouchDirection
+				this.videoList[this.index].flag = true
+				this.listTouchDirection = null
+			},
+			animate(des, direc) {
+				let { distance } = this
+				let promise = new Promise((resolve,reject)=>{
+					this.scroll = true
+					const temp = setInterval(() => {
+						if ((direc === -1 && des < distance) || (direc === 1 && des > distance)) {
+							distance += 100 * direc
+							this.containerStyle = `transform:translateY(${distance}px)`
+						} else {
+							clearInterval(temp)
+							distance = des
+							this.distance = des
+							this.containerStyle = `transform:translateY(${distance}px)`
+							
+							this.scroll = false
+							resolve()
+						}
+					}, 50)
+				})
+				return promise
+			},
+			videoPlay(index){
+				let promise = new Promise((resolve,reject)=>{
+					resolve()
+				})
+				promise.then(res=>{
+					this.videoList[index].flag = !this.videoList[index].flag
+				})
+			},
 			tapLove(){
 				this.videoList[this.index].check = !this.videoList[this.index].check
 				this.videoList = [...this.videoList]
@@ -139,33 +209,22 @@
 					icon:'none',
 					title:`分享索引为${this.index}的视频`
 				})
-			},
-			videoPlay(index){
-				let promise = new Promise((resolve,reject)=>{
-					resolve()
-				})
-				promise.then(res=>{
-					this.videoList[index].flag = !this.videoList[index].flag
-				})
 			}
-			// clickVideo(){
-			// 	this.videoList[this.index].flag = !this.videoList[this.index].flag
-			// }
-        }
-    }
+		},
+	}
 </script>
-<style scoped>
+
+<style>
+	.page{
+		overflow: hidden;
+		background-color: black;
+	}
 	.swiper{
+		position: relative;
 		background-color: #000;
 	}
-	.swiper-item{
-		position: relative;
-	}
-    .video {
-		
-    }
 	.cover-view-center{
-		position: absolute;
+		position: fixed;
 		justify-content: center;
 		align-items: center;
 		opacity: 0.1;
@@ -192,7 +251,17 @@
 	.avater{
 		border-radius: 40upx;
 	}
-	
+	.cover-div-right{
+		position: absolute;
+		bottom: 80upx;
+		margin-right: 20upx;
+		right: 0;
+		//#ifndef APP-PLUS-NVUE
+		display: flex;
+		flex-direction: column;
+		//#endif
+		z-index: 9999;
+	}
 	.cover-view-right{
 		position: absolute;
 		bottom: 80upx;
@@ -210,8 +279,4 @@
 		width: 80upx;
 	
 	}
-	.page{
-		
-	}
-	
 </style>

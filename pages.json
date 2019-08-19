@@ -3,10 +3,30 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "swiper"
+			}
+		},
+		{
+			"path": "pages/css3/index",
+			"style": {
+				"navigationBarTitleText": "css3"
 			}
 		}
+		
 	],
+	"tabBar": {
+		"color": "#000000",
+		"selectedColor": "#2F85FC",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "black",
+		"list": [{
+			"pagePath": "pages/index/index",
+			"text": "swiper"
+		}, {
+			"pagePath": "pages/css3/index",
+			"text": "css3"
+		}]
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
