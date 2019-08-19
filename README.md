@@ -4,6 +4,8 @@ uniapp仿抖音视频滑动效果
 插件在uni-app编译模式下实现效果。
 
 默认为weex编译模式，在 manifest.json 的源码视图里配置是切换模式， manifest.json -> app-plus -> nvueCompiler 切换编译模式。
+
+swiper在非App端内嵌video性能比较差，不建议导入过多视频。
 # 1.0.0更新内容
 1.视频滑动效果
 
