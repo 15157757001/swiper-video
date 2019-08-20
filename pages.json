@@ -1,6 +1,12 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/scroll/index",
+			"style": {
+				"navigationBarTitleText": "scroll"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "swiper"
@@ -25,6 +31,9 @@
 		}, {
 			"pagePath": "pages/css3/index",
 			"text": "css3"
+		}, {
+			"pagePath": "pages/scroll/index",
+			"text": "scroll"
 		}]
 	},
 	"globalStyle": {

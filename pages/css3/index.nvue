@@ -94,6 +94,11 @@
 			await this.pushVideoList()
 			this.videoPlay(this.index)
 		},
+		onHide(){
+			for (let item of this.videoList) {
+				item.flag = false
+			}
+		},
 		methods:{
 			pushVideoList(){
 				let promise = new Promise((resolve,reject)=>{
@@ -152,7 +157,9 @@
 				const destination = this.listTouchDirection*this.sysheight+this.distance
 				//不允许滚动出列表
 				if(destination>0||destination<-this.sysheight*(this.videoList.length-1)) return
-				this.videoList[this.index].flag = false
+				for (let item of this.videoList) {
+					item.flag = false
+				}
 				//开始滚动
 				await this.animate(destination, this.listTouchDirection)
 				this.index = this.index - this.listTouchDirection

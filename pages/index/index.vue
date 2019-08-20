@@ -6,11 +6,9 @@
 			@change="changeCurrent"
 			:style="{ height: height }"
 			:current="index">
-			<swiper-item v-for="(item, index) in videoList" :key="index" class="swiper-item">
+			<swiper-item v-for="(item, index) in videoList" :key="index" class="swiper-item" @click="clickVideo()">
 				<chunlei-video class="video" :src="item.src"  :height="height" :width="width" :duration="item.duration" :play="item.flag">
 				</chunlei-video>
-				
-				<cover-view class="cover-view-center" :style="{ height: height,width: width }">
 					
 				</cover-view>
 				<cover-view class="cover-view-left">
@@ -147,10 +145,10 @@
 				promise.then(res=>{
 					this.videoList[index].flag = !this.videoList[index].flag
 				})
+			},
+			clickVideo(){
+				this.videoList[this.index].flag = !this.videoList[this.index].flag
 			}
-			// clickVideo(){
-			// 	this.videoList[this.index].flag = !this.videoList[this.index].flag
-			// }
         }
     }
 </script>

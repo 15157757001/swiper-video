@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<video :src="src" :controls="false" :show-play-btn="false" 
+		<video :src="src" :controls="controls" :show-play-btn="false" 
 			:style="{ height: height,width: width }" :loop="true"
 			:enable-progress-gesture="false" @click="clickVideo"
 			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate"></video>
@@ -11,6 +11,10 @@
 <script>
 	export default{ 
 		props:{
+			controls:{
+				type:Boolean,
+				default:false
+			},
 			src:{
 				type:String,
 				default:''
