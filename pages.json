@@ -25,9 +25,6 @@
 		}, {
 			"pagePath": "pages/css3/index",
 			"text": "css3"
-		}, {
-			"pagePath": "pages/scroll/index",
-			"text": "scroll"
 		}]
 	},
 	"globalStyle": {

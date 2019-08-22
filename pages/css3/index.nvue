@@ -157,11 +157,12 @@
 				const destination = this.listTouchDirection*this.sysheight+this.distance
 				//不允许滚动出列表
 				if(destination>0||destination<-this.sysheight*(this.videoList.length-1)) return
+				
+				//开始滚动
+				await this.animate(destination, this.listTouchDirection)
 				for (let item of this.videoList) {
 					item.flag = false
 				}
-				//开始滚动
-				await this.animate(destination, this.listTouchDirection)
 				this.index = this.index - this.listTouchDirection
 				this.videoList[this.index].flag = true
 				this.listTouchDirection = null
