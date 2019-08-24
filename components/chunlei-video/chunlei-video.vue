@@ -2,7 +2,7 @@
 	<view>
 		<video :src="src" :controls="controls" :show-play-btn="false" 
 			:style="{ height: height,width: width }" :loop="true"
-			:enable-progress-gesture="false" @click="clickVideo"
+			:enable-progress-gesture="false" @click="clickVideo" :initial-time="startTime"
 			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate"></video>
 		<cover-view class="progressBar" :style="{ width: barWidth }"></cover-view>
 	</view>
@@ -34,6 +34,10 @@
 			duration:{
 				type:Number,
 				default:0
+			},
+			initialTime:{
+				type:Number,
+				default:0
 			}
 		},
 		data(){
@@ -43,9 +47,10 @@
 		},
 		methods:{
 			timeupdate(event){
+				if(!this.play) return
 				if(this.time>=this.duration) this.time=0
 				this.time = this.time + 0.25 
-				
+				if(this.duration == 0) this.time = 0
 			},
 			clickVideo(){
 				this.$emit('click')
@@ -57,6 +62,7 @@
 				}else{
 					this.videoCtx = uni.createVideoContext(`video_${this.src}`,this);
 					this.videoCtx.pause();
+					this.$emit('pause',this.time)
 				}
 				
 			}
@@ -64,18 +70,29 @@
 		watch:{
 			play(newVal,oldVal){
 				this.videoPlay()
+			},
+			startTime:{
+				immediate: true,
+				handler(newVal,oldVal){
+					this.time = newVal
+					if(this.duration == 0) this.time = 0
+				}
 			}
 		},
 		computed:{
 			barWidth(){
 				let width = this.time/this.duration*parseInt(this.width)
+				
 				return `${width}px`
+			},
+			startTime(){
+				return this.initialTime
 			}
 		}
 	}
 </script>
 
-<style>
+<style scoped>
 	.video{
 		width: 100%;
 		height: 100%;

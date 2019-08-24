@@ -13,23 +13,29 @@
 					</div>
 				</div>
 			</cover-view>
-			<block v-for="(item, index) in videoList" :key="index">
-				<chunlei-video class="video" :src="item.src"  :height="height" :width="width" :duration="item.duration" :play="item.flag">
-				</chunlei-video>
-				<cover-view class="cover-view-left">
-					<!-- #ifdef APP-PLUS-NVUE-->
-					<text class="left-text">{{item.content}}</text>
-					<!-- #endif -->
-					<!-- #ifndef APP-PLUS-NVUE-->
-					{{item.content}}
-					<!-- #endif -->
-				</cover-view>
-				<cover-view class="cover-view-right">
-					<cover-image :src="item.avater" class="avater img" @click.stop="tapAvater"></cover-image>
-					<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></cover-image>
-					<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></cover-image>
-					<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
-				</cover-view>
+			<block v-for="(item, idx) in videoList" :key="idx">
+				<div class="video-box" :style="{ height: height }">
+					<chunlei-video class="video" :src="item.src"  :height="height" :width="width" 
+						:duration="item.duration" :play="item.flag" v-if="Math.abs(index-idx)<=2"
+						:initialTime="item.initialTime" @pause="pauseVideo"
+					>
+					</chunlei-video>
+					<cover-view class="cover-view-left">
+						<!-- #ifdef APP-PLUS-NVUE-->
+						<text class="left-text">{{item.content}}</text>
+						<!-- #endif -->
+						<!-- #ifndef APP-PLUS-NVUE-->
+						{{item.content}}
+						<!-- #endif -->
+					</cover-view>
+					<cover-view class="cover-view-right">
+						<cover-image :src="item.avater" class="avater img" @click.stop="tapAvater"></cover-image>
+						<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></cover-image>
+						<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></cover-image>
+						<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
+					</cover-view>
+				</div>
+				
 			</block>
 		</div>
 	
@@ -53,6 +59,7 @@
 				listTouchStartY: 0,
 				listTouchDirection: null,
 				scroll:false,
+				playCount:2,//剩余多少视频加载视频列表
 				videoList:[
 					{
 						src:'https://dcloud-img.oss-cn-hangzhou.aliyuncs.com/guide/uniapp/%E7%AC%AC1%E8%AE%B2%EF%BC%88uni-app%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D%EF%BC%89-%20DCloud%E5%AE%98%E6%96%B9%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B@20181126.mp4',
@@ -60,7 +67,8 @@
 						flag:false,
 						check:false,
 						avater:'../../static/logo.png',
-						duration:842
+						duration:842,
+						initialTime:0
 					},
 					{
 						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=167057&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
@@ -68,7 +76,8 @@
 						flag:false,
 						check:true,
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
-						duration:200
+						duration:200,
+						initialTime:0
 					},
 					{
 						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=167805&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
@@ -76,7 +85,8 @@
 						flag:false,
 						check:false,
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
-						duration:191
+						duration:191,
+						initialTime:0
 					},
 				]
 			}
@@ -124,6 +134,9 @@
 				}) 
 				return promise
 			},
+			pauseVideo(val){
+				if(typeof this.videoList[this.index].initialTime !='undefined') this.videoList[this.index].initialTime = val
+			},
 			clickVideo(){
 				this.videoList[this.index].flag = !this.videoList[this.index].flag
 			},
@@ -166,6 +179,10 @@
 				this.index = this.index - this.listTouchDirection
 				this.videoList[this.index].flag = true
 				this.listTouchDirection = null
+				//加载视频
+				if(this.videoList.length - this.index - 1 <= this.playCount){
+					await this.pushVideoList()
+				}
 			},
 			animate(des, direc) {
 				let { distance } = this
@@ -229,6 +246,10 @@
 	}
 	.swiper{
 		position: relative;
+		background-color: #000;
+	}
+	.video-box{
+	
 		background-color: #000;
 	}
 	.cover-view-center{
