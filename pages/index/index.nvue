@@ -5,23 +5,28 @@
 			:vertical="true"
 			@change="changeCurrent"
 			:current="index">
-			<swiper-item v-for="(item, index) in videoList" :key="index" class="swiper-item" @click="clickVideo()">
-				<chunlei-video class="video" :src="item.src"  :height="height" :width="width" :duration="item.duration" :play="item.flag">
-				</chunlei-video>
-				<cover-view class="cover-view-left">
-					<!-- #ifdef APP-PLUS-NVUE-->
-					<text class="left-text">{{item.content}}</text>
-					<!-- #endif -->
-					<!-- #ifndef APP-PLUS-NVUE-->
-					{{item.content}}
-					<!-- #endif -->
-				</cover-view>
-				<cover-view class="cover-view-right">
-					<cover-image :src="item.avater" class="avater img" @click.stop="tapAvater"></cover-image>
-					<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></cover-image>
-					<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></cover-image>
-					<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
-				</cover-view>
+			<swiper-item v-for="(item, idx) in videoList" :key="idx" class="swiper-item">
+				<div class="video-box">
+					<chunlei-video class="video" :src="item.src"  :height="height" :width="width" 
+						:duration="item.duration" :play="item.flag" v-if="Math.abs(index-idx)<=1"
+						:initialTime="item.initialTime" @pause="pauseVideo"
+					>
+					</chunlei-video>
+					<cover-view class="cover-view-left">
+						<!-- #ifdef APP-PLUS-NVUE-->
+						<text class="left-text">{{item.content}}</text>
+						<!-- #endif -->
+						<!-- #ifndef APP-PLUS-NVUE-->
+						{{item.content}}
+						<!-- #endif -->
+					</cover-view>
+					<cover-view class="cover-view-right">
+						<cover-image :src="item.avater" class="avater img" @click.stop="tapAvater"></cover-image>
+						<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></cover-image>
+						<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></cover-image>
+						<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
+					</cover-view>
+				</div>
 			</swiper-item>
 		</swiper>
     </div>
@@ -42,7 +47,8 @@
 						flag:false,
 						check:false,
 						avater:'../../static/logo.png',
-						duration:842
+						duration:842,
+						initialTime:0
 					},
 					{
 						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=167057&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
@@ -50,7 +56,8 @@
 						flag:false,
 						check:true,
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
-						duration:200
+						duration:200,
+						initialTime:0
 					},
 					{
 						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=167805&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
@@ -58,7 +65,8 @@
 						flag:false,
 						check:false,
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
-						duration:191
+						duration:191,
+						initialTime:0
 					},
 				],
 				height:'667px',
@@ -109,6 +117,8 @@
 									})
 								}
 							}
+							this.videoList = [...this.videoList,...videoGroup]
+							this.videoList = [...this.videoList,...videoGroup]
 							this.videoList = [...this.videoList,...videoGroup]
 							resolve()
 						}
@@ -164,6 +174,9 @@
     .video {
 		
     }
+	.video-box{
+		flex: 1;
+	}
 	.cover-view-center{
 		position: absolute;
 		justify-content: center;

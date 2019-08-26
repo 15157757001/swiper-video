@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<video :src="src" :controls="controls" :show-play-btn="false" 
-			:style="{ height: height,width: width }" :loop="true"
+			:style="{ height: height,width: width }" :loop="true" @waiting="waiting"
 			:enable-progress-gesture="false" @click="clickVideo" :initial-time="startTime"
 			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate"></video>
 		<cover-view class="progressBar" :style="{ width: barWidth }"></cover-view>
@@ -47,6 +47,7 @@
 		},
 		methods:{
 			timeupdate(event){
+				
 				if(!this.play) return
 				if(this.time>=this.duration) this.time=0
 				this.time = this.time + 0.25 
@@ -64,6 +65,9 @@
 					this.videoCtx.pause();
 					this.$emit('pause',this.time)
 				}
+				
+			},
+			waiting(){
 				
 			}
 		},
