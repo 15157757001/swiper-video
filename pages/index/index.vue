@@ -9,7 +9,7 @@
 			<swiper-item v-for="(item, idx) in videoList" :key="idx" class="swiper-item" @click="clickVideo()">
 				<div class="video-box">
 					<chunlei-video class="video" :src="item.src"  :height="height" :width="width" 
-						:duration="item.duration" :play="item.flag" v-if="Math.abs(index-idx)<=1"
+						:play="item.flag" v-if="Math.abs(index-idx)<=1"
 						:initialTime="item.initialTime" @pause="pauseVideo"
 					>
 					</chunlei-video>
@@ -48,7 +48,6 @@
 						flag:false,
 						check:false,
 						avater:'../../static/logo.png',
-						duration:842,
 						initialTime:0
 					},
 					{
@@ -57,7 +56,6 @@
 						flag:false,
 						check:true,
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
-						duration:200,
 						initialTime:0
 					},
 					{
@@ -66,13 +64,13 @@
 						flag:false,
 						check:false,
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
-						duration:191,
 						initialTime:0
 					},
 				],
 				height:'667px',
 				index:0,
-				width:''
+				width:'',
+				oldIndex:0
 			}
         },
 		created(){
@@ -109,7 +107,8 @@
 										content:item.data.description,
 										flag:false,
 										check:false,
-										avater:item.data.author.icon
+										avater:item.data.author.icon,
+										initialTime:0
 									})
 								}
 							}
@@ -125,6 +124,9 @@
 			tapLove(){
 				this.videoList[this.index].check = !this.videoList[this.index].check
 				this.videoList = [...this.videoList]
+			},
+			pauseVideo(val){
+				if(typeof this.videoList[this.index].initialTime !='undefined') this.videoList[this.index].initialTime = val
 			},
 			tapAvater(){
 				uni.showToast({
@@ -156,9 +158,14 @@
 				this.videoList[this.index].flag = !this.videoList[this.index].flag
 			},
 			pauseVideo(val){
-				if(typeof this.videoList[this.index].initialTime !='undefined') this.videoList[this.index].initialTime = val
+				if(typeof this.videoList[this.oldIndex].initialTime !='undefined') this.videoList[this.oldIndex].initialTime = val
 			},
-        }
+        },
+		watch:{
+			index(newVal,oldVal){
+				this.oldIndex = oldVal
+			}
+		}
     }
 </script>
 <style scoped>

@@ -16,7 +16,7 @@
 			<block v-for="(item, idx) in videoList" :key="idx">
 				<div class="video-box" :style="{ height: height }">
 					<chunlei-video class="video" :src="item.src"  :height="height" :width="width" 
-						:duration="item.duration" :play="item.flag" v-if="Math.abs(index-idx)<=2"
+						:play="item.flag" v-if="Math.abs(index-idx)<=1"
 						:initialTime="item.initialTime" @pause="pauseVideo"
 					>
 					</chunlei-video>
@@ -67,7 +67,6 @@
 						flag:false,
 						check:false,
 						avater:'../../static/logo.png',
-						duration:842,
 						initialTime:0
 					},
 					{
@@ -76,7 +75,6 @@
 						flag:false,
 						check:true,
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
-						duration:200,
 						initialTime:0
 					},
 					{
@@ -85,7 +83,6 @@
 						flag:false,
 						check:false,
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
-						duration:191,
 						initialTime:0
 					},
 				]
@@ -123,7 +120,8 @@
 										content:item.data.description,
 										flag:false,
 										check:false,
-										avater:item.data.author.icon
+										avater:item.data.author.icon,
+										initialTime:0
 									})
 								}
 							}

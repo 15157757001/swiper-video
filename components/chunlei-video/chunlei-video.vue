@@ -2,7 +2,7 @@
 	<view>
 		<video :src="src" :controls="controls" :show-play-btn="false" 
 			:style="{ height: height,width: width }" :loop="true" @waiting="waiting"
-			:enable-progress-gesture="false" @click="clickVideo" :initial-time="startTime"
+			:enable-progress-gesture="false" @click="clickVideo"
 			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate"></video>
 		<cover-view class="progressBar" :style="{ width: barWidth }"></cover-view>
 	</view>
@@ -31,10 +31,6 @@
 				type:String,
 				default:''
 			},
-			duration:{
-				type:Number,
-				default:0
-			},
 			initialTime:{
 				type:Number,
 				default:0
@@ -42,26 +38,32 @@
 		},
 		data(){
 			return{
-				time:0
+				time:0,
+				duration:0,
+				playFirst:true
 			}
+		},
+		mounted() {
+			this.videoCtx = uni.createVideoContext(`video_${this.src}`,this)
 		},
 		methods:{
 			timeupdate(event){
-				
+				this.duration = event.detail.duration
 				if(!this.play) return
 				if(this.time>=this.duration) this.time=0
-				this.time = this.time + 0.25 
-				if(this.duration == 0) this.time = 0
+				this.time = event.detail.currentTime
 			},
 			clickVideo(){
 				this.$emit('click')
 			},
 			videoPlay(){
 				if(this.play){
-					this.videoCtx = uni.createVideoContext(`video_${this.src}`,this);
 					this.videoCtx.play();
+					if(this.playFirst){
+						this.videoCtx.seek(this.startTime)
+						this.playFirst = false
+					} 
 				}else{
-					this.videoCtx = uni.createVideoContext(`video_${this.src}`,this);
 					this.videoCtx.pause();
 					this.$emit('pause',this.time)
 				}
@@ -78,8 +80,8 @@
 			startTime:{
 				immediate: true,
 				handler(newVal,oldVal){
+					
 					this.time = newVal
-					if(this.duration == 0) this.time = 0
 				}
 			}
 		},
