@@ -1,6 +1,6 @@
 <template>
 	<div class="page" :style="{ height: height }">
-		<div class="swiper" :style="containerStyle">
+		<div class="swiper" ref="swiper">
 			<cover-view class="cover-view-center">
 				<div :style="{ height: height,width: width }" @click="clickVideo"
 					@touchmove="ListTouchMove" @touchend="ListTouchEnd"
@@ -44,6 +44,8 @@
 
 <script>
 	import chunleiVideo from '../../components/chunlei-video/chunlei-video.vue'
+	const animation = weex.requireModule('animation')
+	const modal = weex.requireModule('modal')
 	export default { 
 		components:{
 			chunleiVideo
@@ -145,14 +147,25 @@
 			// ListTouch计算方向
 			ListTouchMove(e) {
 				//该视频向上
-				this.listTouchDirection = this.listTouchStartY - e.changedTouches[0].pageY > 10 ? -1 : 0
+				this.listTouchDirection = this.listTouchStartY - e.changedTouches[0].pageY > 5 ? -1 : 0
 				//该视频向下
-				this.listTouchDirection = e.changedTouches[0].pageY - this.listTouchStartY > 10 ?  1 : this.listTouchDirection
+				this.listTouchDirection = e.changedTouches[0].pageY - this.listTouchStartY > 5 ?  1 : this.listTouchDirection
 				const distance = this.distance + e.changedTouches[0].pageY - this.listTouchStartY
 				if(distance>0) return
 				//判定为点击
 				if(Math.abs(this.listTouchStartY - e.changedTouches[0].pageY)<2){
 					this.listTouchDirection = null
+				}else{
+					var swiper = this.$refs.swiper;
+					animation.transition(swiper, {
+						styles: {
+							transform: `translate(0px, ${distance}px)`,
+						},
+							duration: 0, //ms
+							timingFunction: 'ease',
+							delay: 0 //ms
+						}, () => {
+					})
 				}
 			},
 			// ListTouch计算滚动
@@ -183,23 +196,21 @@
 				}
 			},
 			animate(des, direc) {
-				let { distance } = this
+				this.distance = des
 				let promise = new Promise((resolve,reject)=>{
 					this.scroll = true
-					const temp = setInterval(() => {
-						if ((direc === -1 && des < distance) || (direc === 1 && des > distance)) {
-							distance += 100 * direc
-							this.containerStyle = `transform:translateY(${distance}px)`
-						} else {
-							clearInterval(temp)
-							distance = des
-							this.distance = des
-							this.containerStyle = `transform:translateY(${distance}px)`
-							
+					var swiper = this.$refs.swiper;
+					animation.transition(swiper, {
+						styles: {
+							transform: `translate(0px, ${this.distance}px)`,
+						},
+							duration: 300, //ms
+							timingFunction: 'ease-in-out',
+							delay: 0 //ms
+						}, () => {
 							this.scroll = false
 							resolve()
-						}
-					}, 50)
+					})
 				})
 				return promise
 			},
