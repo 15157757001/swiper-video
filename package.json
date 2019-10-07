@@ -1,0 +1,22 @@
+{
+  "name": "scroll-video",
+  "version": "1.0.0",
+  "description": "uniapp仿抖音视频滑动效果\r # 说明\r 插件分别用swiper实现(多端)和css3动画实现(暂时只支持app,强烈推荐)，可自行切换。",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/15157757001/scroll-video.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/15157757001/scroll-video/issues"
+  },
+  "homepage": "https://github.com/15157757001/scroll-video#readme",
+  "dependencies": {
+    "weex-bindingx": "0.0.49"
+  }
+}

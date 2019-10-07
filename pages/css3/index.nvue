@@ -1,10 +1,11 @@
 <template>
 	<div class="page" :style="{ height: height }">
 		<div class="swiper" ref="swiper">
+			<cover-view class="cover-view-top">
+				<div class="cover-mask-top" :style="{ borderRadius: `${parseInt(width)/2}px` }" ref="arc"></div>
+			</cover-view>
 			<cover-view class="cover-view-center">
-				<div :style="{ height: height,width: width }" @click="clickVideo"
-					@touchmove="ListTouchMove" @touchend="ListTouchEnd"
-					@touchstart="ListTouchStart">
+				<div :style="{ height: height,width: width }" ref="touch" @click="videoPlay" @touchstart="ListTouchStart">
 					<div class="cover-div-right">
 						<image class="avater img" @click.stop="tapAvater"></image>
 						<image class="img" @click.stop="tapLove"></image>
@@ -16,23 +17,18 @@
 			<block v-for="(item, idx) in videoList" :key="idx">
 				<div class="video-box" :style="{ height: height }">
 					<chunlei-video class="video" :src="item.src"  :height="height" :width="width" 
-						:play="item.flag" v-if="Math.abs(index-idx)<=1"
+						:play="item.flag" v-if="Math.abs(index-idx)<=1" :gDuration="item.duration"
 						:initialTime="item.initialTime" @pause="pauseVideo"
 					>
 					</chunlei-video>
 					<cover-view class="cover-view-left">
-						<!-- #ifdef APP-PLUS-NVUE-->
 						<text class="left-text">{{item.content}}</text>
-						<!-- #endif -->
-						<!-- #ifndef APP-PLUS-NVUE-->
-						{{item.content}}
-						<!-- #endif -->
 					</cover-view>
 					<cover-view class="cover-view-right">
-						<cover-image :src="item.avater" class="avater img" @click.stop="tapAvater"></cover-image>
-						<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></cover-image>
-						<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></cover-image>
-						<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
+						<cover-image :src="item.avater" class="avater img"></cover-image>
+						<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img"></cover-image>
+						<cover-image src="../../static/xiaoxi.png" class="img"></cover-image>
+						<cover-image src="../../static/share-fill.png" class="img"></cover-image>
 					</cover-view>
 				</div>
 				
@@ -43,23 +39,25 @@
 </template>
 
 <script>
-	import chunleiVideo from '../../components/chunlei-video/chunlei-video.vue'
-	const animation = weex.requireModule('animation')
-	const modal = weex.requireModule('modal')
+	import chunleiVideo from '../../components/chunlei-video/chunlei-video.vue';
+	import BindingX from 'weex-bindingx';
+	const animation = weex.requireModule('animation');
+	const modal = weex.requireModule('modal');
+
 	export default { 
 		components:{
 			chunleiVideo
 		},
 		data(){
 			return{
+				arcToken:0,
+				gesToken:0,
 				height:'667px',
 				index:0,
 				width:'',
 				sysheight:0,
 				containerStyle:'',
 				distance:0,
-				listTouchStartY: 0,
-				listTouchDirection: null,
 				scroll:false,
 				playCount:2,//剩余多少视频加载视频列表
 				videoList:[
@@ -69,7 +67,8 @@
 						flag:false,
 						check:false,
 						avater:'../../static/logo.png',
-						initialTime:0
+						initialTime:0,
+						duration:841
 					},
 					{
 						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=167057&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
@@ -109,6 +108,14 @@
 			}
 		},
 		methods:{
+			getEl: function(el) {
+			    if (typeof el === 'string' || typeof el === 'number') return el;
+				if (WXEnvironment) {
+				    return el.ref;
+				} else {
+				    return el instanceof HTMLElement ? el : el.$el;
+				}
+			},
 			pushVideoList(){
 				let promise = new Promise((resolve,reject)=>{
 					uni.request({
@@ -142,77 +149,128 @@
 			},
 			// ListTouch触摸开始
 			ListTouchStart(e) {
-				this.listTouchStartY = e.changedTouches[0].pageY
-			},
-			// ListTouch计算方向
-			ListTouchMove(e) {
-				//该视频向上
-				this.listTouchDirection = this.listTouchStartY - e.changedTouches[0].pageY > 5 ? -1 : 0
-				//该视频向下
-				this.listTouchDirection = e.changedTouches[0].pageY - this.listTouchStartY > 5 ?  1 : this.listTouchDirection
-				const distance = this.distance + e.changedTouches[0].pageY - this.listTouchStartY
-				if(distance>0) return
-				//判定为点击
-				if(Math.abs(this.listTouchStartY - e.changedTouches[0].pageY)<2){
-					this.listTouchDirection = null
-				}else{
-					var swiper = this.$refs.swiper;
-					animation.transition(swiper, {
-						styles: {
-							transform: `translate(0px, ${distance}px)`,
-						},
-							duration: 0, //ms
-							timingFunction: 'ease',
-							delay: 0 //ms
-						}, () => {
+				// 如果在执行动画，就不触发
+				if(this.scroll) return 
+				// 解绑动画
+				if(this.gesToken != 0) {
+					BindingX.unbind({
+						eventType:'pan',
+						token:this.gesToken
 					})
+					this.gesToken = 0
+					// return
 				}
-			},
-			// ListTouch计算滚动
-			async ListTouchEnd(e) {
-				if(this.scroll) return
 				
+				let touch_origin = `y+${this.distance}>0? 0 : y+${this.distance}`
+				let arc_origin = `y+${this.distance}>0? (y/400>0.4?0.4:y/400) : 0`
+				// 找到元素 
+				let swiperRef = this.getEl(this.$refs.swiper)
+				let touchRef = this.getEl(this.$refs.touch)
+				let arcRef = this.getEl(this.$refs.arc)
 				
-				//点击
-				if(!this.listTouchDirection){
-					
-					return
-				}
-				const destination = this.listTouchDirection*this.sysheight+this.distance
-				//不允许滚动出列表
-				if(destination>0||destination<-this.sysheight*(this.videoList.length-1)) return
-				
-				//开始滚动
-				await this.animate(destination, this.listTouchDirection)
-				for (let item of this.videoList) {
-					item.flag = false
-				}
-				this.index = this.index - this.listTouchDirection
-				this.videoList[this.index].flag = true
-				this.listTouchDirection = null
-				//加载视频
-				if(this.videoList.length - this.index - 1 <= this.playCount){
-					await this.pushVideoList()
-				}
-			},
-			animate(des, direc) {
-				this.distance = des
-				let promise = new Promise((resolve,reject)=>{
-					this.scroll = true
-					var swiper = this.$refs.swiper;
-					animation.transition(swiper, {
-						styles: {
-							transform: `translate(0px, ${this.distance}px)`,
-						},
-							duration: 300, //ms
-							timingFunction: 'ease-in-out',
-							delay: 0 //ms
-						}, () => {
-							this.scroll = false
-							resolve()
-					})
+				let gesTokenObj = BindingX.bind({
+					anchor:touchRef,
+					eventType:'pan',
+					props: [{
+						element:swiperRef, 
+						property:'transform.translateY',
+						expression: touch_origin
+					},
+					{
+						element:arcRef, 
+						property:'transform.scaleY',
+						expression: arc_origin
+					}]
+				}, (e) => {
+					if(e.state === 'end') {
+						
+						// 记录当前坐标 
+						const distance = this.distance + e.deltaY
+						
+						if(distance>0){
+							this.bindMask(e.deltaY)
+						}else{
+							//  开始进行下一步 回弹还是滑动的 动画
+							this.bindTiming(distance,e.deltaY)
+						}
+					}
 				})
-				return promise
+				// 记录下取消的token 多次 ontouchstart 时要带着 token 把上次的解绑
+				this.gesToken = gesTokenObj.token
+			},
+			bindTiming(distance,Y){
+				// 开始执行动画
+				this.scroll = true
+				let swiperRef = this.getEl(this.$refs.swiper)
+				let sysheight = this.sysheight
+				
+				let changed_Y, final_Y, translate_Y_origin
+				
+				// 生成表达式逻辑
+				if( Math.abs(Y)<=100) {
+					// 往上下拖动100以内时
+					final_Y = this.distance	// 回到原点
+					changed_Y = final_Y - distance    // 计算出需要位置的值
+					translate_Y_origin = `easeOutExpo(t,${distance},${changed_Y},300)` // 运动曲线为easeOutElastic
+				} else{
+					// 往上下拖动超过一半时
+					final_Y = this.distance + (Y>0?1:-1) *this.sysheight
+					changed_Y= final_Y - distance// 计算出需要位置的值
+					translate_Y_origin = `easeOutExpo(t,${distance},${changed_Y},300)` // 运动曲线为easeOutExpo
+				}
+				let result = BindingX.bind({
+					eventType:'timing',       // 结束的时候是没有任何监听的 用 timing 来做定时的动画
+					exitExpression:"t>300",  // 当时间超过 300ms 结束动画
+					props: [
+						{element:swiperRef, property:'transform.translateY',expression:translate_Y_origin},
+						]
+					},async (e) => {
+						if(e.state === 'end' || e.state === 'exit') {
+							this.distance = final_Y
+							this.scroll = false
+							for (let item of this.videoList) {
+								item.flag = false
+							}
+							this.index = this.index + (Y<0?1:-1)
+							this.videoList[this.index].flag = true
+							this.listTouchDirection = null
+							//加载视频
+							if(this.videoList.length - this.index - 1 <= this.playCount){
+								await this.pushVideoList()
+							}
+						}
+				})
+			},
+			bindMask(Y){
+				if(this.arcToken != 0) {
+					BindingX.unbind({
+						eventType:'timing',
+						token:this.arcToken
+					})
+					this.arcToken = 0
+					// return
+				}
+				// 开始执行动画
+				let arcRef = this.getEl(this.$refs.arc)
+				let translate_Y_origin
+				
+				// 生成表达式逻辑
+				if( Y/400 <= 0.4) {
+					// 往上下拖动1000以内时
+					translate_Y_origin = `easeOutExpo(t,${Y/400},${-Y/400},1000)` 
+				} else{
+					translate_Y_origin = `easeOutExpo(t,0.4,-0.4,1000)` 
+				}
+				let result = BindingX.bind({
+					eventType:'timing',       
+					exitExpression:"t>1000", 
+					props: [
+						{element:arcRef, property:'transform.scaleY',expression:translate_Y_origin},
+						]
+					},async (e) => {
+				
+				})
+				this.arcToken = result.token
 			},
 			videoPlay(index){
 				let promise = new Promise((resolve,reject)=>{
@@ -265,8 +323,24 @@
 		position: fixed;
 		justify-content: center;
 		align-items: center;
-		opacity: 0.1;
+		
 		z-index: 999;
+	}
+	.cover-view-top{
+		position: fixed;
+		width: 750rpx;
+		height: 150px;
+		overflow: hidden;
+	}
+	.cover-mask-top{
+		position: absolute;
+		top:-150px;
+		width: 750rpx;
+		height: 300px;
+		background-color: #fff;
+		opacity: 0.8;
+		z-index: 999;
+		transform: scaleY(0);
 	}
 	.cover-view-left{
 		position: absolute;

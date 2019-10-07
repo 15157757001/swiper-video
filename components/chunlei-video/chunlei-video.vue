@@ -34,7 +34,11 @@
 			initialTime:{
 				type:Number,
 				default:0
-			}
+			},
+			gDuration:{
+				type:Number,
+				default:999
+			}, //大概时长使进度条更准确
 		},
 		data(){
 			return{
@@ -83,10 +87,18 @@
 					
 					this.time = newVal
 				}
+			},
+			gDuration:{
+				immediate: true,
+				handler(newVal,oldVal){
+					
+					this.duration = newVal
+				}
 			}
 		},
 		computed:{
 			barWidth(){
+				
 				let width = this.time/this.duration*parseInt(this.width)
 				
 				return `${width}px`
