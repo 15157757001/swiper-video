@@ -3,13 +3,15 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "swiper"
+				"navigationBarTitleText": "swiper",
+				"navigationStyle":"custom"
 			}
 		},
 		{
 			"path": "pages/css3/index",
 			"style": {
-				"navigationBarTitleText": "css3"
+				"navigationBarTitleText": "css3",
+				"navigationStyle":"custom"
 			}
 		}
 		

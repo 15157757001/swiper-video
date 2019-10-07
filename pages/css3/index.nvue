@@ -1,12 +1,9 @@
 <template>
 	<div class="page" :style="{ height: height }">
 		<div class="swiper" ref="swiper">
-			<cover-view class="cover-view-top">
-				<div class="cover-mask-top" :style="{ borderRadius: `${parseInt(width)/2}px` }" ref="arc"></div>
-			</cover-view>
 			<cover-view class="cover-view-center">
 				<div :style="{ height: height,width: width }" ref="touch" @click="videoPlay" @touchstart="ListTouchStart">
-					<div class="cover-div-right">
+					<div class="cover-view-right">
 						<image class="avater img" @click.stop="tapAvater"></image>
 						<image class="img" @click.stop="tapLove"></image>
 						<image class="img" @click.stop="tapMsg"></image>
@@ -26,9 +23,13 @@
 					</cover-view>
 					<cover-view class="cover-view-right">
 						<cover-image :src="item.avater" class="avater img"></cover-image>
+						<text class="right-text"></text>
 						<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img"></cover-image>
+						<text class="right-text">{{item.like}}</text>
 						<cover-image src="../../static/xiaoxi.png" class="img"></cover-image>
+						<text class="right-text">{{item.comment}}</text>
 						<cover-image src="../../static/share-fill.png" class="img"></cover-image>
+						<text class="right-text">分享</text>
 					</cover-view>
 				</div>
 				
@@ -50,13 +51,11 @@
 		},
 		data(){
 			return{
-				arcToken:0,
 				gesToken:0,
 				height:'667px',
 				index:0,
 				width:'',
 				sysheight:0,
-				containerStyle:'',
 				distance:0,
 				scroll:false,
 				playCount:2,//剩余多少视频加载视频列表
@@ -66,6 +65,8 @@
 						content:'456',
 						flag:false,
 						check:false,
+						like:'10w',
+						comment:'1045',
 						avater:'../../static/logo.png',
 						initialTime:0,
 						duration:841
@@ -75,6 +76,8 @@
 						content:'123',
 						flag:false,
 						check:true,
+						like:'7w',
+						comment:'1045',
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
 						initialTime:0
 					},
@@ -83,6 +86,8 @@
 						content:'789',
 						flag:false,
 						check:false,
+						like:'7w',
+						comment:'1045',
 						avater:'http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg',
 						initialTime:0
 					},
@@ -129,6 +134,8 @@
 										content:item.data.description,
 										flag:false,
 										check:false,
+										like:'7w',
+										comment:'1045',
 										avater:item.data.author.icon,
 										initialTime:0
 									})
@@ -162,11 +169,10 @@
 				}
 				
 				let touch_origin = `y+${this.distance}>0? 0 : y+${this.distance}`
-				let arc_origin = `y+${this.distance}>0? (y/400>0.4?0.4:y/400) : 0`
 				// 找到元素 
 				let swiperRef = this.getEl(this.$refs.swiper)
 				let touchRef = this.getEl(this.$refs.touch)
-				let arcRef = this.getEl(this.$refs.arc)
+				
 				
 				let gesTokenObj = BindingX.bind({
 					anchor:touchRef,
@@ -175,11 +181,6 @@
 						element:swiperRef, 
 						property:'transform.translateY',
 						expression: touch_origin
-					},
-					{
-						element:arcRef, 
-						property:'transform.scaleY',
-						expression: arc_origin
 					}]
 				}, (e) => {
 					if(e.state === 'end') {
@@ -187,12 +188,10 @@
 						// 记录当前坐标 
 						const distance = this.distance + e.deltaY
 						
-						if(distance>0){
-							this.bindMask(e.deltaY)
-						}else{
-							//  开始进行下一步 回弹还是滑动的 动画
-							this.bindTiming(distance,e.deltaY)
-						}
+						if(distance>0) return
+						if(this.scroll) return 
+						this.bindTiming(distance,e.deltaY)
+						
 					}
 				})
 				// 记录下取消的token 多次 ontouchstart 时要带着 token 把上次的解绑
@@ -207,8 +206,8 @@
 				let changed_Y, final_Y, translate_Y_origin
 				
 				// 生成表达式逻辑
-				if( Math.abs(Y)<=100) {
-					// 往上下拖动100以内时
+				if( Math.abs(Y)<=30) {
+					// 往上下拖动30以内时
 					final_Y = this.distance	// 回到原点
 					changed_Y = final_Y - distance    // 计算出需要位置的值
 					translate_Y_origin = `easeOutExpo(t,${distance},${changed_Y},300)` // 运动曲线为easeOutElastic
@@ -228,49 +227,20 @@
 						if(e.state === 'end' || e.state === 'exit') {
 							this.distance = final_Y
 							this.scroll = false
-							for (let item of this.videoList) {
-								item.flag = false
+							if( Math.abs(Y)>30) {
+								for (let item of this.videoList) {
+									item.flag = false
+								}
+								this.index = this.index + (Y<0?1:-1)
+								this.videoList[this.index].flag = true
+								//加载视频
+								if(this.videoList.length - this.index - 1 <= this.playCount){
+									await this.pushVideoList()
+								}
 							}
-							this.index = this.index + (Y<0?1:-1)
-							this.videoList[this.index].flag = true
-							this.listTouchDirection = null
-							//加载视频
-							if(this.videoList.length - this.index - 1 <= this.playCount){
-								await this.pushVideoList()
-							}
+							
 						}
 				})
-			},
-			bindMask(Y){
-				if(this.arcToken != 0) {
-					BindingX.unbind({
-						eventType:'timing',
-						token:this.arcToken
-					})
-					this.arcToken = 0
-					// return
-				}
-				// 开始执行动画
-				let arcRef = this.getEl(this.$refs.arc)
-				let translate_Y_origin
-				
-				// 生成表达式逻辑
-				if( Y/400 <= 0.4) {
-					// 往上下拖动1000以内时
-					translate_Y_origin = `easeOutExpo(t,${Y/400},${-Y/400},1000)` 
-				} else{
-					translate_Y_origin = `easeOutExpo(t,0.4,-0.4,1000)` 
-				}
-				let result = BindingX.bind({
-					eventType:'timing',       
-					exitExpression:"t>1000", 
-					props: [
-						{element:arcRef, property:'transform.scaleY',expression:translate_Y_origin},
-						]
-					},async (e) => {
-				
-				})
-				this.arcToken = result.token
 			},
 			videoPlay(index){
 				let promise = new Promise((resolve,reject)=>{
@@ -332,16 +302,6 @@
 		height: 150px;
 		overflow: hidden;
 	}
-	.cover-mask-top{
-		position: absolute;
-		top:-150px;
-		width: 750rpx;
-		height: 300px;
-		background-color: #fff;
-		opacity: 0.8;
-		z-index: 999;
-		transform: scaleY(0);
-	}
 	.cover-view-left{
 		position: absolute;
 		margin-left: 10upx;
@@ -350,45 +310,33 @@
 		z-index: 9999;
 		font-size: 14px;
 		color: #FFFFFF;
-		//#ifndef APP-PLUS-NVUE
-		white-space: pre-wrap;  
-		text-overflow:ellipsis;
-		overflow:hidden;
-		//#endif
 	}
 	.left-text{
 		font-size: 14px;
 		color: #FFFFFF;
 	}
 	.avater{
-		border-radius: 40upx;
+		border-radius: 50upx;
+		border-color: #fff;
+		border-style: solid;
 	}
-	.cover-div-right{
-		position: absolute;
-		bottom: 80upx;
-		margin-right: 20upx;
-		right: 0;
-		//#ifndef APP-PLUS-NVUE
-		display: flex;
-		flex-direction: column;
-		//#endif
-		z-index: 9999;
-	}
+	
 	.cover-view-right{
 		position: absolute;
-		bottom: 80upx;
-		margin-right: 20upx;
-		right: 0;
-		//#ifndef APP-PLUS-NVUE
-		display: flex;
-		flex-direction: column;
-		//#endif
+		bottom: 160upx;
+		
+		right: 20upx;
 		z-index: 9999;
 	}
-	
+	.right-text{
+		text-align: center;
+		font-size: 14px;
+		color: #FFFFFF;
+		margin-bottom: 50upx;
+	}
 	.img{
-		height: 80upx;
-		width: 80upx;
-	
+		height: 100upx;
+		width: 100upx;
+		opacity: 0.9;
 	}
 </style>
