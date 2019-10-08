@@ -1,6 +1,6 @@
 # scroll-video
 uniapp仿抖音视频滑动效果
-# 说明
+# 重要说明
 
 使用了weex-bindingx优化动画，需要运行npm install后在真机调试！！！
 
