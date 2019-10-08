@@ -97,7 +97,7 @@
 			pushVideoList(){
 				let promise = new Promise((resolve,reject)=>{
 					uni.request({
-						url: 'https://api.apiopen.top/videoRecommend?id=127397',
+						url: 'https://api.apiopen.top/videoRecommend?id=127396',
 						success: (res) => {
 							let videoGroup = []
 							for (let item of res.data.result) {
