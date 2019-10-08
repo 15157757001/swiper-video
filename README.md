@@ -1,6 +1,9 @@
 # scroll-video
 uniapp仿抖音视频滑动效果
 # 说明
+
+使用了weex-bindingx优化动画，需要运行npm install后在真机调试！！！
+
 插件分别用swiper实现(多端)和css3动画实现(暂时只支持app,强烈推荐)，可自行切换。
 
 插件在uni-app编译模式下编写。
@@ -34,6 +37,13 @@ swiper在非App端内嵌video性能比较差，不建议导入过多视频。
 5.新增进度条
 
 6.修复h5多个视频播放问题
+# 1.3.0更新内容
+1.css3: 引入BindingX优化拖动性能（运行npm install后可调试）！！！
 
+2.修复进度条
+
+3.优化css3样式
+
+4.css3新增无限加载
 # 测试
 安卓真机调试 小程序模拟器 Chrome ios真机
