@@ -240,7 +240,7 @@
 						if(e.state === 'end') {
 							this.touchType = null
 							//上下
-							if(move==0){
+							if(move==0&& this.distanceX==0){
 								// 记录当前坐标
 								const distance = this.distance + e.deltaY
 								
@@ -248,7 +248,7 @@
 								if(this.scroll) return 
 								this.bindTiming(distance,e.deltaY)
 							}
-							if(move!=0){
+							if(move!=0&& move*this.distanceX<=0){
 								const distance = this.distanceX + e.deltaX
 								if(this.scroll) return 
 								this.bindTimingX(distance,e.deltaX)
@@ -269,8 +269,8 @@
 				let changed_Y, final_Y, translate_Y_origin
 				
 				// 生成表达式逻辑
-				if( Math.abs(Y)<=30) {
-					// 往上下拖动30以内时
+				if( Math.abs(Y)<=10) {
+					// 往上下拖动20以内时
 					final_Y = this.distance	// 回到原点
 					changed_Y = final_Y - distance    // 计算出需要位置的值
 					translate_Y_origin = `easeOutExpo(t,${distance},${changed_Y},300)` // 运动曲线为easeOutElastic
@@ -316,7 +316,7 @@
 				let changed_X, final_X, origin
 				
 				// 生成表达式逻辑
-				if( Math.abs(X)<=30) {
+				if( Math.abs(X)<=10) {
 					final_X = this.distanceX	// 回到原点
 					changed_X = final_X - distance    // 计算出需要位置的值
 					origin = `easeOutExpo(t,${distance},${changed_X},300)` // 运动曲线为easeOutElastic
