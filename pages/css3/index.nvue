@@ -1,20 +1,20 @@
 <template>
 	<div class="page" :style="{ height: height }">
-		<div class="swiper" ref="swiper">
-			<cover-view class="cover-view-center">
-				<div :style="{ height: height,width: width }" ref="touch" @click="videoPlay" @touchstart="ListTouchStart">
-					<div class="cover-view-right">
-						<image class="img" @click.stop="tapAvater"></image>
-						<text class="right-text"> </text>
-						<image class="img" @click.stop="tapLove"></image>
-						<text class="right-text"> </text>
-						<image class="img" @click.stop="tapMsg"></image>
-						<text class="right-text"> </text>
-						<image class="img" @click.stop="tapShare"></image>
-						<text class="right-text"> </text>
-					</div>
+		<cover-view class="cover-view-center">
+			<div :style="{ height: height,width: width }" ref="touch" @click="videoPlay" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
+				<div class="cover-view-right" v-if="distanceX==0">
+					<image class="img" @click.stop="tapAvater"></image>
+					<text class="right-text"> </text>
+					<image class="img" @click.stop="tapLove"></image>
+					<text class="right-text"> </text>
+					<image class="img" @click.stop="tapMsg"></image>
+					<text class="right-text"> </text>
+					<image class="img" @click.stop="tapShare"></image>
+					<text class="right-text"> </text>
 				</div>
-			</cover-view>
+			</div>
+		</cover-view>
+		<div class="swiper" ref="swiper">
 			<block v-for="(item, idx) in videoList" :key="idx">
 				<div class="video-box" :style="{ height: height }">
 					<chunlei-video class="video" :src="item.src"  :height="height" :width="width" 
@@ -41,7 +41,12 @@
 				
 			</block>
 		</div>
-	
+		<div class="left-div" :style="{ height: height,width: width,left:`${-parseInt(width)}px` }" ref="left">
+			<text class="title-text">{{videoList[index].at}}</text>
+		</div>
+		<div class="right-div" :style="{ height: height,width: width,right:`${-parseInt(width)}px` }" ref="right">
+			<text class="title-text">{{videoList[index].content}}</text>
+		</div>
 	</div>
 </template>
 
@@ -57,12 +62,16 @@
 		},
 		data(){
 			return{
+				typeX:true, //是否开启左右滑动
+				oldTouces:{},
+				touchType:null,
 				gesToken:0,
 				height:'667px',
 				index:0,
 				width:'',
 				sysheight:0,
 				distance:0,
+				distanceX:0,
 				scroll:false,
 				playCount:2,//剩余多少视频加载视频列表
 				videoList:[
@@ -169,46 +178,87 @@
 			},
 			// ListTouch触摸开始
 			ListTouchStart(e) {
-				// 如果在执行动画，就不触发
-				if(this.scroll) return 
-				// 解绑动画
-				if(this.gesToken != 0) {
-					BindingX.unbind({
+				this.oldTouces = e.changedTouches[0]
+			},
+			//判定方向
+			ListTouchMove(e){
+				//结束启动判断
+				if(this.touchType == 'stop') return
+				let { oldTouces,oldValue,touchType } = this
+				let newTouces = e.changedTouches[0]
+				
+				if(!this.touchType){
+					//滑动启动条件
+					this.touchType = Math.abs( newTouces.pageY - oldTouces.pageY ) > 5 ? 'moveY' : null
+					//是否开启左右滑动
+					if(!this.touchType&&this.typeX){
+						this.touchType = newTouces.pageX - oldTouces.pageX > 5 ? 'moveXR' : this.touchType
+						this.touchType = newTouces.pageX - oldTouces.pageX < -5 ? 'moveXL' : this.touchType
+					}
+					
+				}else{
+					let move
+					if(this.touchType == 'moveY'){
+						move = 0
+					}else if(this.touchType == 'moveXL'){
+						move = -1
+					}else if(this.touchType == 'moveXR'){
+						move = 1
+					}
+					
+					//关闭启动判断
+					this.touchType = 'stop'
+					// 如果在执行动画，就不触发
+					if(this.scroll) return 
+					// 解绑动画
+					if(this.gesToken != 0) {
+						BindingX.unbind({
+							eventType:'pan',
+							token:this.gesToken
+						})
+						this.gesToken = 0
+						// return
+					}
+					
+					
+					let touch_origin = `y+${this.distance}<=0 && ${move}==0 && ${this.distanceX}==0 ? y+${this.distance} : ${this.distance}`
+					// 找到元素 
+					let swiperRef = this.getEl(this.$refs.swiper)
+					let leftRef = this.getEl(this.$refs.left)
+					let rightRef = this.getEl(this.$refs.right)
+					let touchRef = this.getEl(this.$refs.touch)
+					let gesTokenObj = BindingX.bind({
+						anchor:touchRef,
 						eventType:'pan',
-						token:this.gesToken
+						props: [
+							{element:swiperRef, property:'transform.translateY',expression: touch_origin},
+							{element:swiperRef, property:'transform.translateX',expression: `${move}!=0 && ${move}*x>0 ?x+${this.distanceX} : ${this.distanceX}`},
+							{element:leftRef, property:'transform.translateX',expression: `${move}!=0&& ${move*this.distanceX}<0?x+${this.distanceX} : ${this.distanceX}`},
+							{element:rightRef, property:'transform.translateX',expression: `${move}!=0&& ${move*this.distanceX}<0?x+${this.distanceX} : ${this.distanceX}`}
+						]
+					}, (e) => {
+						if(e.state === 'end') {
+							this.touchType = null
+							//上下
+							if(move==0){
+								// 记录当前坐标
+								const distance = this.distance + e.deltaY
+								
+								if(distance>0) return
+								if(this.scroll) return 
+								this.bindTiming(distance,e.deltaY)
+							}
+							if(move!=0){
+								const distance = this.distanceX + e.deltaX
+								if(this.scroll) return 
+								this.bindTimingX(distance,e.deltaX)
+							}
+						}
 					})
-					this.gesToken = 0
-					// return
+					// 记录下取消的token 多次 ontouchstart 时要带着 token 把上次的解绑
+					this.gesToken = gesTokenObj.token
 				}
 				
-				let touch_origin = `y+${this.distance}>0? 0 : y+${this.distance}`
-				// 找到元素 
-				let swiperRef = this.getEl(this.$refs.swiper)
-				let touchRef = this.getEl(this.$refs.touch)
-				
-				
-				let gesTokenObj = BindingX.bind({
-					anchor:touchRef,
-					eventType:'pan',
-					props: [{
-						element:swiperRef, 
-						property:'transform.translateY',
-						expression: touch_origin
-					}]
-				}, (e) => {
-					if(e.state === 'end') {
-						
-						// 记录当前坐标 
-						const distance = this.distance + e.deltaY
-						
-						if(distance>0) return
-						if(this.scroll) return 
-						this.bindTiming(distance,e.deltaY)
-						
-					}
-				})
-				// 记录下取消的token 多次 ontouchstart 时要带着 token 把上次的解绑
-				this.gesToken = gesTokenObj.token
 			},
 			bindTiming(distance,Y){
 				// 开始执行动画
@@ -255,7 +305,52 @@
 						}
 				})
 			},
+			bindTimingX(distance,X){
+				// 开始执行动画
+				this.scroll = true
+				let swiperRef = this.getEl(this.$refs.swiper)
+				let leftRef = this.getEl(this.$refs.left)
+				let rightRef = this.getEl(this.$refs.right)
+				let width = parseInt(this.width) 
+				
+				let changed_X, final_X, origin
+				
+				// 生成表达式逻辑
+				if( Math.abs(X)<=30) {
+					final_X = this.distanceX	// 回到原点
+					changed_X = final_X - distance    // 计算出需要位置的值
+					origin = `easeOutExpo(t,${distance},${changed_X},300)` // 运动曲线为easeOutElastic
+				} else{
+					final_X = this.distanceX + (X>0?1:-1) *width
+					changed_X= final_X - distance// 计算出需要位置的值
+					origin = `easeOutExpo(t,${distance},${changed_X},300)` // 运动曲线为easeOutExpo
+				}
+				let result = BindingX.bind({
+					eventType:'timing',       // 结束的时候是没有任何监听的 用 timing 来做定时的动画
+					exitExpression:"t>300",  // 当时间超过 300ms 结束动画
+					props: [
+						{element:swiperRef, property:'transform.translateX',expression:origin},
+						{element:leftRef, property:'transform.translateX',expression:origin},
+						{element:rightRef, property:'transform.translateX',expression:origin}
+						]
+					},async (e) => {
+						if(e.state === 'end' || e.state === 'exit') {
+							this.distanceX = final_X
+							this.scroll = false
+							if( Math.abs(X)<=30&&this.distanceX==0){
+								
+							}else if( Math.abs(X)>30&&this.distanceX!=0) {
+								for (let item of this.videoList) {
+									item.flag = false
+								}
+							}else if(Math.abs(X)>30&&this.distanceX==0){
+								this.videoPlay(this.index)
+							}
+						}
+				})
+			},
 			videoPlay(index){
+				if(this.distanceX!=0) return
 				let promise = new Promise((resolve,reject)=>{
 					resolve()
 				})
@@ -264,23 +359,26 @@
 				})
 			},
 			tapLove(){
+				if(this.distanceX!=0) return
 				this.videoList[this.index].check = !this.videoList[this.index].check
-				console.log(this.videoList[this.index].check)
 				this.videoList = [...this.videoList]
 			},
 			tapAvater(){
+				if(this.distanceX!=0) return
 				uni.showToast({
 					icon:'none',
 					title:`点击索引为${this.index}的头像`
 				})
 			},
 			tapMsg(){
+				if(this.distanceX!=0) return
 				uni.showToast({
 					icon:'none',
 					title:`查看索引为${this.index}的评论`
 				})
 			},
 			tapShare(){
+				if(this.distanceX!=0) return
 				uni.showToast({
 					icon:'none',
 					title:`分享索引为${this.index}的视频`
@@ -293,11 +391,27 @@
 <style lang="scss" scoped>
 	.page{
 		overflow: hidden;
-		background-color: black;
+		position: relative;
 	}
 	.swiper{
 		position: relative;
 		background-color: #000;
+	}
+	.left-div{
+		position: absolute;
+		top: 0;
+		justify-content: center;
+		align-items: center;
+	}
+	.right-div{
+		position: absolute;
+		top: 0;
+		justify-content: center;
+		align-items: center;
+	}
+	.title-text{
+		font-size: 16px;
+		color: #000000;
 	}
 	.video-box{
 	

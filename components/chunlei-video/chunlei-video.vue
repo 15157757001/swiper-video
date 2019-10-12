@@ -49,6 +49,7 @@
 		},
 		mounted() {
 			this.videoCtx = uni.createVideoContext(`video_${this.src}`,this)
+			
 		},
 		methods:{
 			timeupdate(event){
