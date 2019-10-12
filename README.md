@@ -11,7 +11,7 @@ uniapp仿抖音视频滑动效果
 默认为weex编译模式，在 manifest.json 的源码视图里配置是切换模式， manifest.json -> app-plus -> nvueCompiler 切换编译模式。
 
 ## 小广告
- [一款播放器](https://github.com/15157757001/uniapp-modal)
+ [你可能需要一款播放器](https://ext.dcloud.net.cn/plugin?id=785)
 
 # 1.0.0更新内容
 1.视频滑动效果
