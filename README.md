@@ -13,9 +13,9 @@ uniapp仿抖音视频滑动效果
 小广告: [您可能需要一款播放器](https://ext.dcloud.net.cn/plugin?id=785)
 # 功能说明
 
-ccs3：上下切换视频，左右查看看详情，weex-bindingx优化动画，无限加载，点击暂停
+ccs3：上下切换视频，左右查看看详情，weex-bindingx优化动画，无限加载，点击暂停，仅支持安卓和ios
 
-swpier： 上下切换视频
+swpier： 上下切换视频，多端兼容
 # 1.0.0更新内容
 1.视频滑动效果
 
