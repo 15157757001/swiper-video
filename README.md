@@ -4,13 +4,18 @@ uniapp仿抖音视频滑动效果
 
 使用了weex-bindingx优化动画，需要运行npm install后在真机调试！！！
 
-插件分别用swiper实现(多端)和css3动画实现(暂时只支持app,强烈推荐)，可自行切换。
+插件分别用swiper实现(多端)和css3动画实现(只支持app,强烈推荐)，可自行切换。
 
 插件在uni-app编译模式下编写。
 
 默认为weex编译模式，在 manifest.json 的源码视图里配置是切换模式， manifest.json -> app-plus -> nvueCompiler 切换编译模式。
 
-swiper在非App端内嵌video性能比较差，不建议导入过多视频。
+小广告: [您可能需要一款播放器](https://ext.dcloud.net.cn/plugin?id=785)
+# 功能说明
+
+ccs3：上下切换视频，左右查看看详情，weex-bindingx优化动画，无限加载，点击暂停，仅支持安卓和ios
+
+swpier： 上下切换视频，多端兼容
 # 1.0.0更新内容
 1.视频滑动效果
 
