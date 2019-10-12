@@ -68,6 +68,7 @@
 				gesToken:0,
 				height:'667px',
 				index:0,
+				oldIndex:0,
 				width:'',
 				sysheight:0,
 				distance:0,
@@ -171,7 +172,7 @@
 				return promise
 			},
 			pauseVideo(val){
-				if(typeof this.videoList[this.index].initialTime !='undefined') this.videoList[this.index].initialTime = val
+				if(typeof this.videoList[this.oldIndex].initialTime !='undefined') this.videoList[this.oldIndex].initialTime = val
 			},
 			clickVideo(){
 				this.videoList[this.index].flag = !this.videoList[this.index].flag
@@ -233,8 +234,8 @@
 						props: [
 							{element:swiperRef, property:'transform.translateY',expression: touch_origin},
 							{element:swiperRef, property:'transform.translateX',expression: `${move}!=0 && ${move}*x>0 ?x+${this.distanceX} : ${this.distanceX}`},
-							{element:leftRef, property:'transform.translateX',expression: `${move}!=0&& ${move*this.distanceX}<0?x+${this.distanceX} : ${this.distanceX}`},
-							{element:rightRef, property:'transform.translateX',expression: `${move}!=0&& ${move*this.distanceX}<0?x+${this.distanceX} : ${this.distanceX}`}
+							{element:leftRef, property:'transform.translateX',expression: `${move}!=0&& ${move*this.distanceX}<=0?x+${this.distanceX} : ${this.distanceX}`},
+							{element:rightRef, property:'transform.translateX',expression: `${move}!=0&& ${move*this.distanceX}<=0?x+${this.distanceX} : ${this.distanceX}`}
 						]
 					}, (e) => {
 						if(e.state === 'end') {
@@ -290,7 +291,7 @@
 						if(e.state === 'end' || e.state === 'exit') {
 							this.distance = final_Y
 							this.scroll = false
-							if( Math.abs(Y)>30) {
+							if( Math.abs(Y)>10) {
 								for (let item of this.videoList) {
 									item.flag = false
 								}
@@ -337,13 +338,13 @@
 						if(e.state === 'end' || e.state === 'exit') {
 							this.distanceX = final_X
 							this.scroll = false
-							if( Math.abs(X)<=30&&this.distanceX==0){
+							if( Math.abs(X)<=10&&this.distanceX==0){
 								
-							}else if( Math.abs(X)>30&&this.distanceX!=0) {
+							}else if( Math.abs(X)>10&&this.distanceX!=0) {
 								for (let item of this.videoList) {
 									item.flag = false
 								}
-							}else if(Math.abs(X)>30&&this.distanceX==0){
+							}else if(Math.abs(X)>10&&this.distanceX==0){
 								this.videoPlay(this.index)
 							}
 						}
@@ -385,6 +386,11 @@
 				})
 			}
 		},
+		watch:{
+			index(newVal,oldVal){
+				this.oldIndex = oldVal
+			}
+		}
 	}
 </script>
 
