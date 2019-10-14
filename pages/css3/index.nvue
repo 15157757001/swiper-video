@@ -1,7 +1,7 @@
 <template>
 	<div class="page" :style="{ height: height }">
 		<cover-view class="cover-view-center">
-			<div :style="{ height: height,width: width }" ref="touch" @click="videoPlay" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
+			<div :style="{ height: height,width: width }" ref="touch" @click="videoPlay(index)" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
 				<div class="cover-view-right" v-if="distanceX==0">
 					<image class="img" @click.stop="tapAvater"></image>
 					<text class="right-text"> </text>
