@@ -14,7 +14,12 @@
 					>
 					</chunlei-video>
 					<cover-view class="cover-view-left">
-						<text class="left-text">{{item.content}}</text>
+						<view class="left-view">
+							<text class="left-text">@{{item.at}}</text>
+						</view>
+						<view class="left-view">
+							<text class="left-text">{{item.content}}</text>
+						</view>
 					</cover-view>
 					<cover-view class="cover-view-right">
 						<cover-image :src="item.avater" class="avater img" @click.stop="tapAvater"></cover-image>
@@ -211,10 +216,10 @@
 	.cover-view-left{
 		position: absolute;
 		margin-left: 10upx;
-		width: 400upx;
-		bottom: 100upx;
+		width: 500upx;
+		bottom: 120upx;
 		z-index: 9999;
-		font-size: 14px;
+		font-size: 16px;
 		color: #FFFFFF;
 		//#ifndef APP-PLUS-NVUE
 		white-space: pre-wrap;  
@@ -222,14 +227,19 @@
 		overflow:hidden;
 		//#endif
 	}
+	.left-view{
+		margin-bottom: 20upx;
+	}
 	.left-text{
-		font-size: 14px;
+		font-size: 16px;
 		color: #FFFFFF;
 	}
 	.avater{
-		border-radius: 40upx;
+		border-radius: 50upx;
+		border-color: #fff;
+		border-style: solid;
+		border-width: 2px;
 	}
-	
 	
 	.cover-view-right{
 		position: absolute;
