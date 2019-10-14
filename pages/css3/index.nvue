@@ -331,6 +331,7 @@
 					exitExpression:"t>300",  // 当时间超过 300ms 结束动画
 					props: [
 						{element:swiperRef, property:'transform.translateX',expression:origin},
+						{element:swiperRef, property:'transform.translateY',expression:`easeOutExpo(t,${this.distance},0,200)`},
 						{element:leftRef, property:'transform.translateX',expression:origin},
 						{element:rightRef, property:'transform.translateX',expression:origin}
 						]
