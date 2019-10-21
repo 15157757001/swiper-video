@@ -52,7 +52,7 @@
 
 <script>
 	import chunleiVideo from '../../components/chunlei-video/chunlei-video.vue';
-	import BindingX from 'weex-bindingx';
+	const BindingX = uni.requireNativePlugin('bindingx');
 	const animation = weex.requireModule('animation');
 	const modal = weex.requireModule('modal');
 
@@ -246,7 +246,7 @@
 								const distance = this.distance + e.deltaY
 								
 								if(distance>0) return
-								if(this.scroll) return 
+								
 								this.bindTiming(distance,e.deltaY)
 							}
 							if(move!=0&& move*this.distanceX<=0){
@@ -295,7 +295,8 @@
 								for (let item of this.videoList) {
 									item.flag = false
 								}
-								this.index = this.index + (Y<0?1:-1)
+								this.index = -this.distance/this.sysheight
+								
 								this.videoList[this.index].flag = true
 								//加载视频
 								if(this.videoList.length - this.index - 1 <= this.playCount){
