@@ -1,6 +1,7 @@
 # scroll-video
 uniapp仿抖音视频滑动效果
 # 重要说明
+请使用[github最新版](https://github.com/15157757001/scroll-video)
 
 插件分别用swiper实现(多端)和css3动画实现(只支持app,强烈推荐)，可自行切换。
 
