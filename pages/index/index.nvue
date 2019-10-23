@@ -1,10 +1,9 @@
 <template>
-    <div class="page">
+    <div class="page" :style="{ height: height }">
 		<swiper
 			class="swiper"
 			:vertical="true"
 			@change="changeCurrent"
-			:style="{ height: height }"
 			:current="index">
 			<swiper-item v-for="(item, idx) in videoList" :key="idx" class="swiper-item">
 				<div class="video-box">
@@ -291,6 +290,10 @@
 		opacity: 0.9;
 	}
 	.page{
+		//#ifndef APP-PLUS-NVUE
+		display: flex;
+		flex-direction: column;
+		//#endif
 		flex: 1; 
 	}
 	
