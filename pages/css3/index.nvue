@@ -17,26 +17,28 @@
 		<div class="swiper" ref="swiper">
 			<block v-for="(item, idx) in videoList" :key="idx">
 				<div class="video-box" :style="{ height: height }">
-					<chunlei-video class="video" :src="item.src"  :height="height" :width="width" 
-						:play="item.flag" v-if="Math.abs(index-idx)<=1" :gDuration="item.duration"
-						:initialTime="item.initialTime" @pause="pauseVideo"
-					>
-					</chunlei-video>
-					<cover-view class="cover-view-left">
-						<text class="left-text">@{{item.at}}</text>
-						<text class="left-text">{{item.content}}</text>
-					</cover-view>
-					<cover-view class="cover-view-right">
-						<cover-image :src="item.avater" class="avater img"></cover-image>
-						<text class="right-text-avater">+</text>
-						<text class="right-text"></text>
-						<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img"></cover-image>
-						<text class="right-text">{{item.like}}</text>
-						<cover-image src="../../static/xiaoxi.png" class="img"></cover-image>
-						<text class="right-text">{{item.comment}}</text>
-						<cover-image src="../../static/share-fill.png" class="img"></cover-image>
-						<text class="right-text">分享</text>
-					</cover-view>
+					<block v-if="Math.abs(index-idx)<=1">
+						<chunlei-video class="video" :src="item.src"  :height="height" :width="width" 
+							:play="item.flag" :gDuration="item.duration"
+							:initialTime="item.initialTime" @pause="pauseVideo"
+						>
+						</chunlei-video>
+						<cover-view class="cover-view-left">
+							<text class="left-text">@{{item.at}}</text>
+							<text class="left-text">{{item.content}}</text>
+						</cover-view>
+						<cover-view class="cover-view-right">
+							<cover-image :src="item.avater" class="avater img"></cover-image>
+							<text class="right-text-avater">+</text>
+							<text class="right-text"></text>
+							<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img"></cover-image>
+							<text class="right-text">{{item.like}}</text>
+							<cover-image src="../../static/xiaoxi.png" class="img"></cover-image>
+							<text class="right-text">{{item.comment}}</text>
+							<cover-image src="../../static/share-fill.png" class="img"></cover-image>
+							<text class="right-text">分享</text>
+						</cover-view>
+					</block>
 				</div>
 				
 			</block>
@@ -303,7 +305,6 @@
 									await this.pushVideoList()
 								}
 							}
-							
 						}
 				})
 			},
@@ -349,6 +350,7 @@
 							}else if(Math.abs(X)>10&&this.distanceX==0){
 								this.videoPlay(this.index)
 							}
+							
 						}
 				})
 			},
