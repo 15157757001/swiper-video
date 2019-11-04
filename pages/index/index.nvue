@@ -14,23 +14,61 @@
 						>
 						</chunlei-video>
 						<cover-view class="cover-view-left">
-							<view class="left-view">
+							<cover-view class="left-view">
+								<!-- #ifdef APP-PLUS -->
 								<text class="left-text">@{{item.at}}</text>
-							</view>
-							<view class="left-view">
-								<text class="left-text">{{item.content}}</text>
-							</view>
+								<!-- #endif -->
+								<!-- #ifndef APP-PLUS -->
+								<cover-view class="left-text">{{item.content}}</cover-view>
+								<!-- #endif -->
+							</cover-view>
+							<cover-view class="left-view">
+								<!-- #ifdef APP-PLUS -->
+								<text class="left-text">@{{item.at}}</text>
+								<!-- #endif -->
+								<!-- #ifndef APP-PLUS -->
+								<cover-view class="left-text">{{item.content}}</cover-view>
+								<!-- #endif -->
+							</cover-view>
 						</cover-view>
 						<cover-view class="cover-view-right">
 							<cover-image :src="item.avater" class="avater img" @click.stop="tapAvater"></cover-image>
+							<!-- #ifdef APP-PLUS -->
 							<text class="right-text-avater">+</text>
 							<text class="right-text"></text>
+							<!-- #endif -->
+							<!-- #ifndef APP-PLUS -->
+							<cover-view class="right-text-avater">+</cover-view>
+							<cover-view class="right-text"></cover-view>
+							<!-- #endif -->
+							
 							<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></cover-image>
+							
+							<!-- #ifdef APP-PLUS -->
 							<text class="right-text">{{item.like}}</text>
+							<!-- #endif -->
+							<!-- #ifndef APP-PLUS -->
+							<cover-view class="right-text">{{item.like}}</cover-view>
+							<!-- #endif -->
+							
 							<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></cover-image>
+							
+							<!-- #ifdef APP-PLUS -->
 							<text class="right-text">{{item.comment}}</text>
+							<!-- #endif -->
+							<!-- #ifndef APP-PLUS -->
+							<cover-view class="right-text">{{item.comment}}</cover-view>
+							<!-- #endif -->
+							
 							<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
+							
+							<!-- #ifdef APP-PLUS -->
 							<text class="right-text">分享</text>
+							<!-- #endif -->
+							<!-- #ifndef APP-PLUS -->
+							<cover-view class="right-text">分享</cover-view>
+							<!-- #endif -->
+							
 						</cover-view>
 					</block>
 				</div>
