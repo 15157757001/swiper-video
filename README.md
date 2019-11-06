@@ -22,8 +22,8 @@ swpier： 上下切换视频，多端兼容
 | typeX | Boolean | false | 是否开启左右滑动 |
 | playCount | Number | 2 | 剩余多少视频加载视频列表 |
 | startDistance | Number | 5 | 开启左右滑动时有效,判断左右上下拖动的启动距离 px |
-| minTime | Number | 300 | 判断为快速滑动的时间,该时间内无视回弹 |
-| backDistance | Number | 200 | 上下滑动的回弹距离 |
+| minTime | Number | 300 | 判断为快速滑动的时间,该时间内无视回弹 ms |
+| backDistance | Number | 200 | 上下滑动的回弹距离 px |
 
 # 1.0.0更新内容
 1.视频滑动效果
