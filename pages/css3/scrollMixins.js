@@ -176,6 +176,8 @@ export default {
 							if(this.videoList.length - this.index - 1 <= this.playCount){
 								await this.pushVideoList()
 							}
+						}else if(Math.abs(Y)<=this.backDistance&&!quickMove){
+							this.videoList[this.index].flag = true
 						}
 					}
 			})
