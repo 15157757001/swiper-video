@@ -1,9 +1,13 @@
 <template>
 	<view>
 		<video :src="src" :controls="controls" :show-play-btn="false" 
-			:style="{ height: height,width: width }" :loop="true" @waiting="waiting"
-			:enable-progress-gesture="false" @click="clickVideo"
-			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate"></video>
+			:style="{ height: height }" :loop="true" @waiting="waiting"
+			:enable-progress-gesture="false" :objectFit="objectFit"
+			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate">
+			<cover-view class="top"></cover-view>
+			<cover-view class="bottom"></cover-view>
+		</video>
+		
 		<cover-view class="progressBar" :style="{ width: barWidth }"></cover-view>
 	</view>
 </template>
@@ -39,6 +43,10 @@
 				type:Number,
 				default:999
 			}, //大概时长使进度条更准确
+			objectFit:{
+				type:String,
+				default:'contain'
+			}
 		},
 		data(){
 			return{
@@ -57,9 +65,6 @@
 				if(!this.play) return
 				if(this.time>=this.duration) this.time=0
 				this.time = event.detail.currentTime
-			},
-			clickVideo(){
-				this.$emit('click')
 			},
 			videoPlay(){
 				if(this.play){
@@ -113,8 +118,22 @@
 
 <style scoped>
 	.video{
-		width: 100%;
-		height: 100%;
+		width: 750rpx;
+	}
+	
+	.top{
+		position: absolute;
+		top:0;
+		background-image: linear-gradient(to top , rgba(0,0,0,0) , rgba(0,0,0,0.7));
+		width: 750rpx;
+		height: 300rpx;
+	}
+	.bottom{
+		position: absolute;
+		bottom: 0;
+		background-image: linear-gradient(to top , rgba(0,0,0,0.7) , rgba(0,0,0,0));
+		width: 750rpx;
+		height: 300rpx;
 	}
 	.progressBar{
 		border-radius: 2upx;
