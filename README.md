@@ -1,7 +1,6 @@
 # scroll-video
 uniapp仿抖音视频滑动效果
 # 重要说明
-请使用[github最新版](https://github.com/15157757001/scroll-video)
 
 插件分别用swiper实现(多端)和css3动画实现(只支持app,强烈推荐)，可自行切换。
 
@@ -15,6 +14,17 @@ uniapp仿抖音视频滑动效果
 ccs3：上下切换视频，左右查看看详情，weex-bindingx优化动画，无限加载，点击暂停，仅支持安卓和ios
 
 swpier： 上下切换视频，多端兼容
+
+## css3参数说明
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| typeX | Boolean | false | 是否开启左右滑动 |
+| playCount | Number | 2 | 剩余多少视频加载视频列表 |
+| startDistance | Number | 5 | 开启左右滑动时有效,判断左右上下拖动的启动距离 px |
+| minTime | Number | 300 | 判断为快速滑动的时间,该时间内无视回弹 |
+| backDistance | Number | 200 | 上下滑动的回弹距离 |
+
 # 1.0.0更新内容
 1.视频滑动效果
 
@@ -49,5 +59,12 @@ swpier： 上下切换视频，多端兼容
 3.优化css3样式
 
 4.css3新增无限加载
+# 1.4.0更新内容
+1.swiper:修复下滑不灵敏的bug
+
+2.css3:新增参数说明，新增左右滑动查看详情
+
+3.video组件新增上下边框阴影
+
 
 ## 如果觉得插件不错，麻烦给个好评
