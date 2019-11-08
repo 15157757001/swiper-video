@@ -123,7 +123,7 @@ export default {
 							
 							this.bindTiming(distance,e.deltaY,quickMove)
 						}
-						if(move!=0&& move*this.distanceX<=0&& Math.abs(e.deltaY)>this.startDistance){
+						if(move!=0&& move*this.distanceX<=0){
 							const distance = this.distanceX + e.deltaX
 							if(this.scroll) return 
 							this.bindTimingX(distance,e.deltaX)
