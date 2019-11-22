@@ -2,7 +2,8 @@
 	<div class="page" :style="{ height: height }">
 		<cover-view class="cover-view-center">
 			<div :style="{ height: height,width: width }" ref="touch" @click="videoPlay(index)" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
-				
+				<div class="cover-view-right" v-if="distanceX==0" @click.stop="">
+				</div>
 			</div>
 		</cover-view>
 		<div class="swiper" ref="swiper">
@@ -208,6 +209,7 @@
 		background-color: #000;
 	}
 	.cover-view-center{
+		
 		position: absolute;
 		justify-content: center;
 		align-items: center;
