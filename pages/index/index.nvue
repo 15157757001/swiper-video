@@ -141,10 +141,11 @@
 			this.width = `${width}px` 
 		},
 		async mounted() {
-			await this.pushVideoList()
 			setTimeout(() =>{
 				this.videoPlay(this.index)
 			}, 200);
+			await this.pushVideoList()
+			
 		},
 		onHide(){
 			for (let item of this.videoList) {

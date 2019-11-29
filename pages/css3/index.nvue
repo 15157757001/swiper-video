@@ -103,8 +103,9 @@
 			this.init()
 		},
 		async mounted() {
-			await this.pushVideoList()
 			this.videoPlay(this.index)
+			await this.pushVideoList()
+			
 		},
 		onHide(){
 			for (let item of this.videoList) {
