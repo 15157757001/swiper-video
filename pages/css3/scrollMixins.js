@@ -61,6 +61,11 @@ export default {
 				
 				//滑动启动条件
 				this.touchType = Math.abs( newTouces.pageY - oldTouces.pageY ) > startDistance ? 'moveY' : null
+				if(this.touchType=='moveY'&&newTouces.pageY> oldTouces.pageY){
+					this.touchType = 'moveYB'
+				}else if(this.touchType=='moveY'&&newTouces.pageY<oldTouces.pageY){
+					this.touchType = 'moveYT'
+				}
 				//是否开启左右滑动
 				if(!this.touchType&&this.typeX){
 					this.touchType = newTouces.pageX - oldTouces.pageX > startDistance ? 'moveXR' : this.touchType
@@ -68,17 +73,8 @@ export default {
 				}
 				
 			}else{
-				let move
-				if(this.touchType == 'moveY'){
-					move = 0
-				}else if(this.touchType == 'moveXL'){
-					move = -1
-				}else if(this.touchType == 'moveXR'){
-					move = 1
-				}
 				
-				//关闭启动判断
-				this.touchType = 'stop'
+				
 				// 如果在执行动画，就不触发
 				if(this.scroll) return 
 				// 解绑动画
@@ -91,8 +87,23 @@ export default {
 					// return
 				}
 				
+				let move
+				if(this.touchType == 'moveYB'||this.touchType == 'moveYT'){
+					move = 0
+				}else if(this.touchType == 'moveXL'){
+					move = -1
+				}else if(this.touchType == 'moveXR'){
+					move = 1
+				}
 				
-				let touch_origin = `y+${this.distance}<=0 && ${move}==0 && ${this.distanceX}==0 ? y+${this.distance} : ${this.distance}`
+				
+				
+				//关闭启动判断
+				this.touchType = 'stop'
+				console.log(this.distance-this.sysheight,-this.sysheight*this.videoList.length)
+				let touch_origin = `y+${this.distance}<=0 && ${move}==0 && ${this.distanceX}==0 && 
+					y+${this.distance}-${this.sysheight}>=${-this.sysheight*this.videoList.length}? 
+					y+${this.distance} : ${this.distance}`
 				// 找到元素 
 				let swiperRef = this.getEl(this.$refs.swiper)
 				let leftRef = this.getEl(this.$refs.left)
@@ -173,9 +184,9 @@ export default {
 							
 							this.videoList[this.index].flag = true
 							//加载视频
-							if(this.videoList.length - this.index - 1 <= this.playCount){
-								await this.pushVideoList()
-							}
+							// if(this.videoList.length - this.index - 1 <= this.playCount){
+							// 	await this.pushVideoList()
+							// }
 						}else if(Math.abs(Y)<=this.backDistance&&!quickMove){
 							this.videoList[this.index].flag = true
 						}
