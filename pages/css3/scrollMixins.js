@@ -100,7 +100,7 @@ export default {
 				
 				//关闭启动判断
 				this.touchType = 'stop'
-				console.log(this.distance-this.sysheight,-this.sysheight*this.videoList.length)
+				
 				let touch_origin = `y+${this.distance}<=0 && ${move}==0 && ${this.distanceX}==0 && 
 					y+${this.distance}-${this.sysheight}>=${-this.sysheight*this.videoList.length}? 
 					y+${this.distance} : ${this.distance}`
@@ -130,7 +130,7 @@ export default {
 							// 记录当前坐标
 							const distance = this.distance + e.deltaY
 							
-							if(distance>0) return
+							if(distance>0 || this.distance + e.deltaY-this.sysheight<-this.sysheight*this.videoList.length) return
 							
 							this.bindTiming(distance,e.deltaY,quickMove)
 						}
@@ -184,9 +184,9 @@ export default {
 							
 							this.videoList[this.index].flag = true
 							//加载视频
-							// if(this.videoList.length - this.index - 1 <= this.playCount){
-							// 	await this.pushVideoList()
-							// }
+							if(this.videoList.length - this.index - 1 <= this.playCount){
+								await this.pushVideoList()
+							}
 						}else if(Math.abs(Y)<=this.backDistance&&!quickMove){
 							this.videoList[this.index].flag = true
 						}
