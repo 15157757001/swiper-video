@@ -1,5 +1,5 @@
 <template>
-	<div class="page" :style="{ height: height }">
+	<div class="page">
 		<cover-view class="cover-view-center">
 			<div :style="{ height: height,width: width }" ref="touch" @click="videoPlay(index)" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
 				<div class="cover-view-right" v-if="distanceX==0" @click.stop="">
@@ -182,6 +182,7 @@
 
 <style lang="scss" scoped>
 	.page{
+		flex: 1;
 		overflow: hidden;
 		position: relative;
 	}
