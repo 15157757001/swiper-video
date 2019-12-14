@@ -265,11 +265,11 @@
 		z-index: 9999;
 		font-size: 16px;
 		color: #FFFFFF;
-		//#ifndef APP-PLUS-NVUE
-		white-space: pre-wrap;  
+		/* #ifndef APP-PLUS */
+		white-space: pre-wrap;
 		text-overflow:ellipsis;
 		overflow:hidden;
-		//#endif
+		/* #endif */
 	}
 	.left-view{
 		margin-bottom: 20upx;
@@ -289,10 +289,10 @@
 		position: absolute;
 		bottom: 160upx;
 		right: 20upx;
-		//#ifndef APP-PLUS-NVUE
+		/* #ifndef APP-PLUS-NVUE */
 		display: flex;
 		flex-direction: column;
-		//#endif
+		/* #endif */
 		z-index: 9999;
 	}
 	
@@ -335,10 +335,10 @@
 		opacity: 0.9;
 	}
 	.page{
-		//#ifndef APP-PLUS-NVUE
+		/* #ifndef APP-PLUS-NVUE */
 		display: flex;
 		flex-direction: column;
-		//#endif
+		/* #endif */
 		flex: 1; 
 	}
 	
