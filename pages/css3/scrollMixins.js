@@ -27,11 +27,11 @@ export default {
 	},
 	created(){
 		//#ifdef APP-PLUS
-		plus.screen.lockOrientation("portrait-primary")
+			plus.screen.lockOrientation("portrait-primary")
 		//#endif
-		this.sysheight = uni.getSystemInfoSync().windowHeight
+		this.sysheight = uni.getSystemInfoSync().screenHeight
 		this.height = `${this.sysheight}px` 
-		let width = uni.getSystemInfoSync().windowWidth 
+		let width = uni.getSystemInfoSync().screenWidth 
 		this.width = `${width}px` 
 	},
 	methods:{
@@ -45,6 +45,7 @@ export default {
 		},
 		// ListTouch触摸开始
 		ListTouchStart(e) {
+			
 			this.oldTime = new Date()
 			this.oldTouces = e.changedTouches[0]
 		},
@@ -108,9 +109,19 @@ export default {
 				let swiperRef = this.getEl(this.$refs.swiper)
 				let leftRef = this.getEl(this.$refs.left)
 				let rightRef = this.getEl(this.$refs.right)
-				let touchRef = this.getEl(this.$refs.touch)
+				
+				let anchor
+				if(this.distanceX==0){
+					let touchRef = this.getEl(this.$refs.touch)
+					anchor = touchRef
+				}else if(this.distanceX<=0){
+					anchor = rightRef
+				}else{
+					anchor = leftRef
+				}
+				
 				let gesTokenObj = BindingX.bind({
-					anchor:touchRef,
+					anchor:anchor,
 					eventType:'pan',
 					props: [
 						{element:swiperRef, property:'transform.translateY',expression: touch_origin},

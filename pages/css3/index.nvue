@@ -1,11 +1,19 @@
 <template>
 	<div class="page">
-		<cover-view class="cover-view-center">
+		<div class="cover-view-center" v-if="distanceX==0">
 			<div :style="{ height: height,width: width }" ref="touch" @click="videoPlay(index)" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
-				<div class="cover-view-right" v-if="distanceX==0" @click.stop="">
+				<div class="cover-view-right" v-if="distanceX==0">
+					<image class="img" @click.stop="tapAvater"></image>
+					<text class="right-text"> </text>
+					<image class="img" @click.stop="tapLove"></image>
+					<text class="right-text"> </text>
+					<image class="img" @click.stop="tapMsg"></image>
+					<text class="right-text"> </text>
+					<image class="img" @click.stop="tapShare"></image>
+					<text class="right-text"> </text>
 				</div>
 			</div>
-		</cover-view>
+		</div>
 		<div class="swiper" ref="swiper">
 			<block v-for="(item, idx) in videoList" :key="idx">
 				<div class="video-box" :style="{ height: height }">
@@ -35,12 +43,14 @@
 				
 			</block>
 		</div>
-		<div class="left-div" :style="{ height: height,width: width,left:`${-parseInt(width)}px` }" ref="left">
-			<text class="title-text">{{videoList[index].at}}</text>
+		
+		<div class="left-div" :style="{ height: height,width: width,left:`${-parseInt(width)}px` }" ref="left"  @touchstart="ListTouchStart" @touchmove="ListTouchMove">
+			<text class="title-text" @click="clickbt">{{videoList[index].at}}</text>
 		</div>
-		<div class="right-div" :style="{ height: height,width: width,right:`${-parseInt(width)}px` }" ref="right">
+		<div class="right-div" :style="{ height: height,width: width,right:`${-parseInt(width)}px` }" ref="right"  @touchstart="ListTouchStart" @touchmove="ListTouchMove">
 			<text class="title-text">{{videoList[index].content}}</text>
 		</div>
+		
 	</div>
 </template>
 
@@ -113,6 +123,9 @@
 			}
 		},
 		methods:{
+			clickbt(){
+				console.log(11)
+			},
 			//设置参数
 			init(){
 				this.typeX = true //开启左右滑动
@@ -207,12 +220,12 @@
 		color: #000000;
 	}
 	.video-box{
-	
+		position: relative;
 		background-color: #000;
 	}
 	.cover-view-center{
 		
-		position: absolute;
+		position: fixed;
 		justify-content: center;
 		align-items: center;
 		
@@ -228,7 +241,7 @@
 		position: absolute;
 		margin-left: 10upx;
 		width: 500upx;
-		bottom: 120upx;
+		bottom: 200upx;
 		z-index: 9999;
 		font-size: 16px;
 		color: #FFFFFF;
