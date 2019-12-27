@@ -4,10 +4,10 @@
 			:style="{ height: height }" :loop="true" @waiting="waiting"
 			:enable-progress-gesture="false" :objectFit="objectFit"
 			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate">
-			<cover-view class="top"></cover-view>
-			<cover-view class="bottom"></cover-view>
 		</video>
-		
+		<cover-image class="img" :style="{ height: height }" :src="poster" v-if="poster!=''&&playFirst"></cover-image>
+		<cover-view class="top"></cover-view>
+		<cover-view class="bottom"></cover-view>
 		<cover-view class="progressBar" :style="{ width: barWidth }"></cover-view>
 	</view>
 </template>
@@ -46,6 +46,10 @@
 			objectFit:{
 				type:String,
 				default:'contain'
+			},
+			poster:{ //视频封面的图片
+				type:String,
+				default:''
 			}
 		},
 		data(){
@@ -120,7 +124,11 @@
 	.video{
 		width: 750rpx;
 	}
-	
+	.img{
+		position: absolute;
+		
+		width: 750rpx;
+	}
 	.top{
 		position: absolute;
 		top:0;
