@@ -163,26 +163,30 @@
 				}) 
 				return promise
 			},
-			tapLove(){
+			tapLove(e){
+				e.stopPropagation();
 				if(this.distanceX!=0) return
 				this.videoList[this.index].check = !this.videoList[this.index].check
 				this.videoList = [...this.videoList]
 			},
-			tapAvater(){
+			tapAvater(e){
+				e.stopPropagation();
 				if(this.distanceX!=0) return
 				uni.showToast({
 					icon:'none',
 					title:`点击索引为${this.index}的头像`
 				})
 			},
-			tapMsg(){
+			tapMsg(e){
+				e.stopPropagation();
 				if(this.distanceX!=0) return
 				uni.showToast({
 					icon:'none',
 					title:`查看索引为${this.index}的评论`
 				})
 			},
-			tapShare(){
+			tapShare(e){
+				e.stopPropagation();
 				if(this.distanceX!=0) return
 				uni.showToast({
 					icon:'none',
