@@ -183,6 +183,7 @@
 		background-color: #FFFFFF;
 		z-index: 999999;
 		position: absolute;
+		left: 0;
 		bottom: 40upx;
 		//#ifndef APP-PLUS-NVUE
 		animation: flicker 4s linear infinite;

@@ -250,7 +250,7 @@ export default {
 					}
 			})
 		},
-		bindCurrentX(current,time==300) {
+		bindCurrentX(current,time=300) {
 			if(this.distanceX!=0) return
 			this.scroll = true
 			let swiperRef = this.getEl(this.$refs.swiper)
@@ -258,7 +258,7 @@ export default {
 			
 			final_Y = this.distance + (this.index-current) *this.sysheight
 			changed_Y= final_Y - this.distance // 计算出需要位置的值
-			
+			time = time * Math.abs(this.index-current)
 			origin = `easeOutExpo(t,${this.distance},${changed_Y},${time})` // 运动曲线为easeOutExpo
 		
 			
@@ -267,7 +267,7 @@ export default {
 				eventType:'timing', // 结束的时候是没有任何监听的 用 timing 来做定时的动画
 				exitExpression:`t>${time}`, // 当时间超过 300ms 结束动画
 				props: [
-					{element:swiperRef, property:'transform.translateY',expression:translate_Y_origin},
+					{element:swiperRef, property:'transform.translateY',expression:origin},
 				]
 				},async (e) => {
 					if(e.state === 'end' || e.state === 'exit') {
@@ -278,8 +278,10 @@ export default {
 							item.flag = false
 						}
 						this.index = -this.distance/this.sysheight
-							
-						this.videoList[this.index].flag = true
+						setTimeout(()=>{
+							this.videoList[this.index].flag = true
+						},200)
+						
 						//加载视频
 						if(this.videoList.length - this.index - 1 <= this.playCount){
 							await this.pushVideoList()
