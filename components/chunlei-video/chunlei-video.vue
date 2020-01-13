@@ -1,10 +1,11 @@
 <template>
-	<view>
+	<view class="video">
 		<video :src="src" :controls="controls" :show-play-btn="false" 
 			:style="{ height: height }" :loop="true" @waiting="waiting"
 			:enable-progress-gesture="false" :objectFit="objectFit"
 			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate">
 		</video>
+		<cover-view class="icon-view" v-if="!play&&!playFirst"><text class="icon" style="color:#FFF">&#xe896;</text></cover-view>
 		<cover-image class="img" :style="{ height: height }" :src="poster" v-if="poster!=''&&playFirst"></cover-image>
 		<cover-view class="top"></cover-view>
 		<cover-view class="bottom"></cover-view>
@@ -58,6 +59,15 @@
 				duration:0,
 				playFirst:true
 			}
+		},
+		beforeCreate() {
+			// #ifdef APP-NVUE
+			var domModule = weex.requireModule('dom');
+			domModule.addRule('fontFace', {
+				'fontFamily': "texticons",
+				'src': "url('/static/chunlei-video/text-icon.ttf')"
+			});
+			// #endif
 		},
 		mounted() {
 			this.videoCtx = uni.createVideoContext(`video_${this.src}`,this)
@@ -121,13 +131,28 @@
 </script>
 
 <style scoped>
+	/* #ifndef APP-PLUS-NVUE */
+	@font-face {
+		font-family: "texticons";
+		src: url('~@/static/chunlei-video/text-icon.ttf') format('truetype');
+	}
+	/* #endif*/
 	.video{
+		/* #ifndef APP-NVUE */
+		display: flex;
+		/* #endif */
 		width: 750rpx;
+		
+		justify-content: center;
+		align-items: center;
 	}
 	.img{
 		position: absolute;
 		
 		width: 750rpx;
+	}
+	.icon-view{
+		position: absolute;
 	}
 	.top{
 		position: absolute;
@@ -135,6 +160,15 @@
 		background-image: linear-gradient(to top , rgba(0,0,0,0) , rgba(0,0,0,0.7));
 		width: 750rpx;
 		height: 300rpx;
+	}
+	.icon{
+		opacity: 0.6;
+		font-size: 42px;
+		color: #fff;
+		/* #ifndef APP-PLUS-NVUE */
+		font-family: "texticons";
+		/* #endif*/
+		font-family: texticons;
 	}
 	.bottom{
 		position: absolute;
