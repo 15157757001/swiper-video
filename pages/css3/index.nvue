@@ -55,7 +55,7 @@
 </template>
 
 <script>
-	import chunleiVideo from '../../components/chunlei-video/chunlei-video.vue';
+	import chunleiVideo from '../../components/chunlei-video/chunlei-video';
 	import scrollMixins from './scrollMixins';
 	const BindingX = uni.requireNativePlugin('bindingx');
 	const animation = weex.requireModule('animation');
