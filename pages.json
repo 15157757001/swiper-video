@@ -4,14 +4,49 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "swiper",
-				"navigationStyle":"custom"
+				"navigationStyle":"custom",
+				"app-plus": {
+					"titleNView": false,
+					"subNVues": [{
+						"id": "comment",
+						"path": "pages/subnvue/comment",
+						"type": "popup",
+						"style": {
+							"height": "100%",
+							"position":"absolute",
+							"bottom":"0",
+							"background":"transparent"
+						}
+					}]
+				}
 			}
 		},
 		{
 			"path": "pages/css3/index",
 			"style": {
 				"navigationBarTitleText": "css3",
-				"navigationStyle":"custom"
+				"navigationStyle":"custom",
+				"app-plus": {
+					"titleNView": false,
+					"subNVues": [{
+						"id": "comment",
+						"path": "pages/subnvue/comment",
+						"type": "popup",
+						"style": {
+							"height": "100%",
+							"position":"absolute",
+							"bottom":"0",
+							"background":"transparent"
+						}
+					}]
+				}
+			}
+		},
+		{
+			"path": "pages/subnvue/comment",
+			"style": {
+				"navigationBarTitleText": "swiper"
+				
 			}
 		}
 		

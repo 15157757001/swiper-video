@@ -183,10 +183,8 @@
 			tapMsg(e){
 				e.stopPropagation();
 				if(this.distanceX!=0) return
-				uni.showToast({
-					icon:'none',
-					title:`查看索引为${this.index}的评论`
-				})
+				uni.getSubNVueById('comment').show('slide-in-bottom', 200,()=>{});
+				uni.$emit('popup',this.videoList[this.index].content)
 			},
 			tapShare(e){
 				e.stopPropagation();

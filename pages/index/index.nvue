@@ -52,7 +52,7 @@
 							<cover-view class="right-text">{{item.like}}</cover-view>
 							<!-- #endif -->
 							
-							<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg"></cover-image>
+							<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg(item)"></cover-image>
 							
 							<!-- #ifdef APP-PLUS-NVUE -->
 							<text class="right-text">{{item.comment}}</text>
@@ -171,11 +171,17 @@
 					title:`点击索引为${this.index}的头像`
 				})
 			},
-			tapMsg(){
+			tapMsg(item){
+				//#ifndef APP-NVUE
 				uni.showToast({
 					icon:'none',
 					title:`查看索引为${this.index}的评论`
 				})
+				//#endif
+				//#ifdef APP-NVUE
+				uni.getSubNVueById('comment').show('slide-in-bottom', 200,()=>{});
+				uni.$emit('popup',item.content)
+				//#endif
 			},
 			tapShare(){
 				uni.showToast({

@@ -1,0 +1,86 @@
+<template>
+    <div class="subnvue flex">
+		<div class="mask" @click="hide()"></div>
+		<div class="content" @click.stop="">
+			{{title}}
+			<div class="top flex">
+				<div></div>
+				<div @click="hide()" class="hideBtn flex">
+					<text class="text-bottom">X</text>
+				</div>
+				
+			</div>
+			<input v-model="message"/>
+		</div>
+    </div>
+</template>
+
+<script>
+    export default {
+		data() {
+			return {
+				flag:false,
+				message:'111'
+			}
+		},
+		beforeCreate() {},
+		created() {
+			uni.$on('popup', (val) => {  
+				console.log(val)
+			})  
+		},
+        methods: {
+            hide() {
+                uni.getSubNVueById('comment').hide('slide-out-bottom', 300)
+            },
+        }
+    }
+</script>
+
+<style scoped>
+	.flex{
+		display: flex;
+		flex-direction: column;
+	}
+	.subnvue {
+		
+		flex-direction: column;
+		flex: 1;
+		background-color: transparent;
+		height: 100vh;
+		
+	}
+	.mask{
+		background-color: #000;
+		opacity: 0.1;
+		flex: 3;
+	}
+	.content{
+		background-color: #fff;
+		flex: 7; 
+		flex-direction: column;
+		opacity: 0.9;
+		border-top-left-radius:20rpx;
+		border-top-right-radius:20rpx; 
+		 
+	}
+	.top{
+		
+		padding: 10rpx;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.hideBtn{
+		padding: 10rpx;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+</style>
