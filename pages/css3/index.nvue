@@ -116,7 +116,7 @@
 			this.videoPlay(this.index)
 			await this.pushVideoList()
 
-			this.bindCurrentX(4,300) //滚动至4
+			this.bindCurrentX(2,300) //滚动至4
 			
 		},
 		onHide(){

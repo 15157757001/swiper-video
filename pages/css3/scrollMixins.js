@@ -92,6 +92,7 @@ export default {
 				if(this.touchType == 'moveYB'||this.touchType == 'moveYT'){
 					move = 0
 				}else if(this.touchType == 'moveXL'){
+					console.log(111)
 					move = -1
 				}else if(this.touchType == 'moveXR'){
 					move = 1

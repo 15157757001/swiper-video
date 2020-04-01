@@ -78,7 +78,7 @@
     </div>
 </template>
 <script>
-	import chunleiVideo from '../../components/chunlei-video/chunlei-video.vue'
+	import chunleiVideo from '../../components/chunlei-video/chunlei-video'
     export default { 
 		components:{
 			chunleiVideo
