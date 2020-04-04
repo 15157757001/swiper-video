@@ -186,7 +186,6 @@
 		transform: translateY(1000rpx);
 		flex-direction: column;
 		justify-content: space-between;
-		
 		border-top-left-radius:30rpx;
 		border-top-right-radius:30rpx; 
 	}

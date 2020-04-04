@@ -149,8 +149,7 @@
 										at:item.data.author.name,
 										avater:item.data.author.icon,
 										initialTime:0,
-										duration:item.data.duration,
-										objectFit:'fill'
+										duration:item.data.duration
 									})
 								}
 							}
