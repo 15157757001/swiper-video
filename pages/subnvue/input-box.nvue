@@ -1,0 +1,106 @@
+<template>
+    <div class="subnvue" @click.stop="">
+		<div class="mask" @click="hide()"></div>
+		<div class="bottom" >
+			<div v-if="!flag"></div>
+			<input class="input" focus @keyboardheightchange="heightChange" :cursor-spacing="space" v-model="message" :placeholder="placeholder" v-if="flag"/>
+			<div class="bottomBtn-box">
+				<div class="bottomBtn" @click="clickSubmit" :style="{backgroundColor:message!=''?'#00CAFC':'#B1EFFE'}">
+					<text class="bottom-text">发送</text>
+				</div>
+			</div>
+			
+		</div>
+    </div>
+</template>
+
+<script>
+    export default {
+		data() {
+			return {
+				flag:false,
+				message:'',
+				space:0  //兼容ios
+			}
+		},
+		beforeCreate() {
+			
+		},
+		created(){
+			//ios首页输入兼容
+			uni.getSystemInfo({
+				success: (e) => {
+					if(e.platform=='ios') this.space = -50
+				}
+			})
+			uni.$on('showInput', () => {this.flag = true})  
+		},
+		destroyed() {
+			uni.$off('showInput')
+		},
+		methods: {
+			hide() {
+				uni.hideKeyboard()
+				setTimeout(()=>{
+					this.quit()
+				},200)
+			},
+			heightChange(e){
+				console.log(e.detail.height)
+				if(e.detail.height<=0) this.quit()
+				
+			},
+			clickSubmit(){
+				if(this.message=='') return
+				uni.$emit('sendComment',this.message)
+				this.quit()
+			},
+			quit(){
+				uni.hideKeyboard()
+				this.message = ''
+				uni.$emit('showComment')
+				uni.getSubNVueById('input-box').hide();
+				this.flag = false
+			}
+		},
+	}
+</script>
+
+<style lang="scss" scoped>
+	.subnvue {
+		flex-direction: column;
+		flex: 1;
+		background-color: transparent;
+	}
+	.mask{
+		flex: 1;
+		opacity: 0.1;
+		//background-color: #fff;
+	}
+	.bottom{
+		box-shadow: 0 -1px 4px 1px rgba(0,0,0,0.1);
+		background-color: #fff;
+		padding: 40rpx 40rpx 0 40rpx;
+		align-items: center;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.input{
+		flex: 1;
+		height: 140rpx;
+		padding: 0 0 90rpx 0;
+	}
+	.bottomBtn-box{
+		height: 140rpx;
+		padding: 0 0 90rpx 0;
+	}
+	.bottomBtn{
+		padding: 5rpx 15rpx;
+		border-radius:10rpx;
+		margin-left: 30rpx;
+		
+	}
+	.bottom-text{
+		color: #fff;
+	}
+</style>

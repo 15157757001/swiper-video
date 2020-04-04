@@ -49,6 +49,9 @@ export default {
 			this.oldTime = new Date()
 			this.oldTouces = e.changedTouches[0]
 		},
+		ListTouchEnd(e) {
+			console.log('end')
+		},
 		//判定方向
 		ListTouchMove(e){
 			

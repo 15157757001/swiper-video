@@ -55,7 +55,7 @@
 </template>
 
 <script>
-	import chunleiVideo from '../../components/chunlei-video/chunlei-video.vue';
+	import chunleiVideo from '../../components/chunlei-video/chunlei-video';
 	import scrollMixins from './scrollMixins';
 	const BindingX = uni.requireNativePlugin('bindingx');
 	const animation = weex.requireModule('animation');
@@ -111,12 +111,15 @@
 		},
 		created(){
 			this.init()
+			//隐藏subnvue
+			uni.getSubNVueById('comment').hide()
+			uni.getSubNVueById('input-box').hide()
 		},
 		async mounted() {
 			this.videoPlay(this.index)
 			await this.pushVideoList()
 
-			this.bindCurrentX(4,300) //滚动至4
+			this.bindCurrentX(2,300) //滚动至4
 			
 		},
 		onHide(){
@@ -183,10 +186,9 @@
 			tapMsg(e){
 				e.stopPropagation();
 				if(this.distanceX!=0) return
-				uni.showToast({
-					icon:'none',
-					title:`查看索引为${this.index}的评论`
-				})
+				uni.getSubNVueById('comment').show('none',0,()=>{
+					uni.$emit('showComment',this.videoList[this.index].content)
+				});
 			},
 			tapShare(e){
 				e.stopPropagation();

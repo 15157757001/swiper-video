@@ -4,7 +4,32 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "swiper",
-				"navigationStyle":"custom"
+				"navigationStyle":"custom",
+				"app-plus": {
+					"titleNView": false,
+					"subNVues": [{
+						"id": "comment",
+						"path": "pages/subnvue/comment",
+						"style": {
+							"height": "100%",
+							"position":"absolute",
+							"bottom":"0",
+							"background":"transparent",
+							"zindex":1
+							
+						}
+					},{
+						"id": "input-box",
+						"path": "pages/subnvue/input-box",
+						"style": {
+							"height": "100%",
+							"position":"absolute",
+							"bottom":"0",
+							"background":"transparent",
+							"zindex":2
+						}
+					}]
+				}
 			}
 		},
 		{
@@ -12,6 +37,30 @@
 			"style": {
 				"navigationBarTitleText": "css3",
 				"navigationStyle":"custom"
+				// "app-plus": {
+				// 	"titleNView": false,
+				// 	"subNVues": [{
+				// 		"id": "comment",
+				// 		"path": "pages/subnvue/comment",
+				// 		"style": {
+				// 			"height": "100%",
+				// 			"position":"absolute",
+				// 			"bottom":"0",
+				// 			"background":"transparent",
+				// 			"zindex":1
+				// 		}
+				// 	},{
+				// 		"id": "input-box",
+				// 		"path": "pages/subnvue/input-box",
+				// 		"style": {
+				// 			"height": "100%",
+				// 			"position":"absolute",
+				// 			"bottom":"0",
+				// 			"background":"transparent",
+				// 			"zindex":2
+				// 		}
+				// 	}]
+				// }
 			}
 		}
 		

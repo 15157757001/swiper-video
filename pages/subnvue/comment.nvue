@@ -1,0 +1,286 @@
+<template>
+    <div class="subnvue flex" @click.stop="">
+		<div class="mask" @click="hide()"></div>
+		<div class="content flex" ref="content">
+			<div class="top flex">
+				<div class="title">评论</div>
+				<div @click="hide()" class="hideBtn flex">
+					<text class="iconfont">&#xe628;</text>
+				</div>
+			</div>
+			<scroll-view scroll-y class="srcoll-view">
+				
+					<div v-for="(item,index) in dataList" class="card" :key="index">
+						<div class="card-left">
+							<image class="card-image" src="../../static/logo.png"></image>
+							<div class="card-content">
+								<div class="card-top">
+									<text class="card-name" @click="replyName(item.name)">{{item.name}}</text>
+									<text class="color-grey">{{item.time}}</text>
+								</div>
+								<div class="card-message">
+									<text class="margin-right" v-if="item.reply">回复</text>
+									<text class="color-bule margin-right" v-if="item.reply" @click="replyName(item.reply)">{{item.reply}}:</text>
+									<text class="margin-right card-text">{{item.message}}</text>
+								</div>
+								<!-- <div class="card-bottom">
+									<text class="color-grey">查看7条回复></text>
+								</div> -->
+							</div>
+							
+						</div>
+						
+						<div class="card-right">
+							<text class="iconfont card-icon color-gray">&#xe603;</text>
+							<text class="color-gray">赞</text>
+							<text class="iconfont card-icon color-gray">&#xe67f;</text>
+							<text class="color-gray">踩</text>
+						</div>
+					</div>
+				
+			</scroll-view>
+			<div class="bottom flex"  @click="showInput">
+				<input v-if="flag" class="input" @click="showInput" disabled v-model="message" :placeholder="placeholder"/>
+				
+			</div>
+			
+		</div>
+    </div>
+</template>
+
+<script>
+	//#ifdef APP-NVUE
+	const animation = weex.requireModule('animation')
+	const modal = weex.requireModule('modal');
+	//#endif
+    export default {
+		data() {
+			return {
+				flag:true,
+				canHide:false,
+				message:'',
+				placeholder:'来聊聊天把',
+				reply:'',
+				dataList:[
+					{name:'张三',time:'04-03',message:'下载来试试',reply:'春雷'},
+					{name:'张三',time:'04-03',message:'下载来试试',reply:'春雷'}
+				]
+			}
+		},
+		beforeCreate() {
+			// #ifdef APP-NVUE
+			var domModule = weex.requireModule('dom');
+			domModule.addRule('fontFace', {
+				'fontFamily': "iconfont",
+				'src': "url('../../static/subnvue/iconfont.ttf')"
+			});
+			// #endif
+		},
+		created() {
+			uni.$on('showComment', this.showComment)  
+			uni.$on('sendComment', this.sendComment)  
+		},
+		destroyed() {
+			uni.$off('showComment')
+			uni.$off('sendComment')
+		},
+        methods: {
+			replyName(name){
+				this.reply = name
+				this.placeholder = `回复 ${name} :`
+			},
+			//发送评论
+			sendComment(val){
+				console.log(val)
+				this.dataList.push({
+					name:'春雷',
+					time:'04-03',
+					message:val,
+					reply:this.reply,
+				})
+				this.reply = ''
+			},
+			//显示评论
+			showComment(val){
+				this.flag = true
+				this.canHide = false
+				let content = this.$refs.content;
+				animation.transition(content, {
+					styles: {transform: `translate(0px, 0px)`,},
+					duration: 200, //ms
+					timingFunction: 'ease-in-out',
+					delay: 0 //ms
+				},()=>{
+					this.canHide = true
+				})
+			},
+            hide() {
+				if(!this.canHide) return
+				let content = this.$refs.content;
+				animation.transition(content, {
+					styles: {transform: `translate(0px, 1000rpx)`,},
+					duration: 200, //ms
+					timingFunction: 'ease-in-out',
+					delay: 0 //ms
+				},()=>{
+					uni.getSubNVueById('comment').hide()
+				})
+			},
+			showInput(){
+				uni.getSubNVueById('input-box').show('none',0,()=>{
+					this.flag = false
+					uni.$emit('showInput')
+				});
+			}
+        }
+    }
+</script>
+
+<style  lang="scss" scoped>
+	/* #ifndef APP-PLUS-NVUE */
+	@font-face {
+		font-family: "iconfont";
+		src: url('~@/static/subnvue/iconfont.ttf') format('truetype');
+	}
+	/* #endif*/
+	.iconfont{
+		font-family: "iconfont";
+		font-family: iconfont;
+		font-size: 18px;
+	}
+	.color-gray{
+		color: #515352;
+		font-size: 14px;
+	}
+	.color-grey{
+		color: #A8ACAF;
+		font-size: 12px;
+	}
+	.color-bule{
+		color: #55ADDF;
+		
+	}
+	.margin-right{
+		margin-right: 20rpx;
+	}
+	
+	
+	.subnvue {
+		flex-direction: column;
+		flex: 1;
+		background-color: transparent;
+		position: relative;
+	}
+	.mask{
+		flex-direction: column;
+		background-color:#000 ;
+		opacity: 0.4;
+		flex: 1;
+	}
+	.content{
+		position: absolute;
+		background-color: #fff;
+		width: 750rpx;
+		bottom: 0;
+		height: 1000rpx;
+		transform: translateY(1000rpx);
+		flex-direction: column;
+		justify-content: space-between;
+		
+		border-top-left-radius:30rpx;
+		border-top-right-radius:30rpx; 
+	}
+	.top{
+		padding: 20rpx;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.title{
+		flex: 1;
+		align-items: center;
+	}
+	.hideBtn{
+		padding: 10rpx;
+		justify-content: center;
+		align-items: center;
+	}
+	
+	/* 底部输入框 */
+	.bottom{
+		box-shadow: 0 -1px 4px 1px rgba(0,0,0,0.1);
+		
+		align-items: center;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.input{
+		flex-direction: row;
+		align-items: center;
+		flex: 1;
+		height: 140rpx;
+		padding: 30rpx;
+		background-color: #fff;
+	}
+	.bottomBtn{
+		padding: 5rpx 15rpx;
+		border-radius:10rpx;
+		margin-left: 30rpx;
+	}
+	.bottom-text{
+		color: #fff;
+	}
+	
+	/* 评论滚动区 */
+	.srcoll-view{
+		flex: 1;
+	}
+	.card{
+		position: relative;
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 30rpx;
+	}
+	
+	.card-left{
+		flex-direction: row;
+	}
+	
+	/* 中 */
+	.card-content{
+		flex: 1;
+		
+	}
+	.card-image{
+		height: 80rpx;
+		width: 80rpx;
+		border-radius: 50%;
+		margin-right: 30rpx;
+	}
+	.card-top{
+		height: 80rpx;
+		justify-content: space-between;
+	}
+	.card-message{
+		padding: 20rpx 0;
+		flex-direction: row;
+		width: 600rpx;
+		
+	}
+	.card-text{
+		flex: 1;
+	}
+
+
+	/* 右 */
+	.card-right{
+		position: absolute;
+		right:30rpx;
+		top:30rpx;
+		flex-direction: row;
+		
+	}
+	.card-icon{
+		margin-left: 40rpx;
+		margin-right: 20rpx;
+	}
+</style>

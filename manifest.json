@@ -50,7 +50,8 @@
             "ios" : {},
             /* SDK配置 */
             "sdkConfigs" : {}
-        }
+        },
+        "compilerVersion" : 2
     },
     /* 快应用特有相关 */
     "quickapp" : {},
