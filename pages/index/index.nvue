@@ -4,6 +4,7 @@
 			class="swiper"
 			:vertical="true"
 			@change="changeCurrent"
+			@animationfinish="animationFinish"
 			:current="index">
 			<swiper-item v-for="(item, idx) in videoList" :key="idx" class="swiper-item">
 					
@@ -114,9 +115,22 @@
 			
 		},
 		async mounted() {
-		
+			let id = "http://img.kaiyanapp.com/f120ede658c867d475fa6191257d09b8.jpeg?imageMogr2/quality/60/format/jpg"
 			await this.pushVideoList()
-			this.videoPlay(this.index)
+			
+			this.index = this.videoList.reduce((total,item)=>{
+				if(id==''||id==item.id){
+					id = ''
+				}else{
+					total++
+				}
+				return total
+			},0)
+			if(!this.index){
+				this.$nextTick(()=>{
+					this.videoPlay(this.index)
+				})
+			}
 		},
 		onHide(){
 			for (let item of this.videoList) {
@@ -124,12 +138,24 @@
 			}
 		},
         methods: {
+			animationFinish(e){
+				//#ifdef APP-PLUS
+				this.changeCurrent(e)
+				//#endif
+			},
 			changeCurrent(e){
-				this.index = e.detail.current;
-				for (let item of this.videoList) {
-					item.flag = false
-				}
-				this.videoList[this.index].flag = !this.videoList[this.index].flag
+				this.index = e.detail.current; 
+				
+				this.$nextTick(()=>{
+					
+					for (let item of this.videoList) {
+						item.flag = false
+					}   
+					
+					this.videoList[this.index].flag = true
+					
+				}) 
+				
 			},
 			pushVideoList(){
 				let promise = new Promise((resolve,reject)=>{
@@ -147,6 +173,7 @@
 										like:'7w',
 										comment:'1045',
 										at:item.data.author.name,
+										id:item.data.author.icon,
 										avater:item.data.author.icon,
 										initialTime:0,
 										duration:item.data.duration
