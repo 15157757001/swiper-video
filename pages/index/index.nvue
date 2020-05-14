@@ -9,71 +9,75 @@
 			<swiper-item v-for="(item, idx) in videoList" :key="idx" class="swiper-item">
 					
 					<div v-if="Math.abs(index-idx)<=1" class="video-box">
-						<chunlei-video class="video" :src="item.src"  :height="height" :width="width" 
-							:play="item.flag" v-if="Math.abs(index-idx)<=1" :gDuration="item.duration"
-							:initialTime="item.initialTime" @pause="pauseVideo" :objectFit="item.objectFit"
-						>
-						</chunlei-video>
-						
-						<cover-view class="cover-view-left">
-							<cover-view class="left-view">
+						<block v-if="item.src">
+							<chunlei-video class="video" :src="item.src"  :height="height" :width="width"
+								:play="item.flag" v-if="Math.abs(index-idx)<=1" :gDuration="item.duration"
+								:initialTime="item.initialTime" @pause="pauseVideo" :objectFit="item.objectFit"
+								@timeupdate="wacthTime" @playEnd="playEnd"
+							>
+							</chunlei-video>
+							
+							<cover-view class="cover-view-left">
+								<cover-view class="left-view">
+									<!-- #ifdef APP-PLUS-NVUE -->
+									<text class="left-text">@{{item.at}}</text>
+									<!-- #endif -->
+									<!-- #ifndef APP-PLUS-NVUE -->
+									<cover-view class="left-text">@{{item.at}}</cover-view>
+									<!-- #endif -->
+								</cover-view>
+								<cover-view class="left-view">
+									<!-- #ifdef APP-PLUS-NVUE -->
+									<text class="left-text">{{item.content}}</text>
+									<!-- #endif -->
+									<!-- #ifndef APP-PLUS-NVUE -->
+									<cover-view class="left-text">{{item.content}}</cover-view>
+									<!-- #endif -->
+								</cover-view>
+							</cover-view>
+							<cover-view class="cover-view-right">
+								<cover-image :src="item.avater" class="avater img" @click.stop="tapAvater"></cover-image>
 								<!-- #ifdef APP-PLUS-NVUE -->
-								<text class="left-text">@{{item.at}}</text>
+								<text class="right-text-avater">+</text>
+								<text class="right-text"></text>
 								<!-- #endif -->
 								<!-- #ifndef APP-PLUS-NVUE -->
-								<cover-view class="left-text">@{{item.at}}</cover-view>
+								<cover-view class="right-text-avater">+</cover-view>
+								<cover-view class="right-text"></cover-view>
 								<!-- #endif -->
-							</cover-view>
-							<cover-view class="left-view">
+								
+								<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></cover-image>
+								
 								<!-- #ifdef APP-PLUS-NVUE -->
-								<text class="left-text">{{item.content}}</text>
+								<text class="right-text">{{item.like}}</text>
 								<!-- #endif -->
 								<!-- #ifndef APP-PLUS-NVUE -->
-								<cover-view class="left-text">{{item.content}}</cover-view>
+								<cover-view class="right-text">{{item.like}}</cover-view>
 								<!-- #endif -->
+								
+								<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg(item)"></cover-image>
+								
+								<!-- #ifdef APP-PLUS-NVUE -->
+								<text class="right-text">{{item.comment}}</text>
+								<!-- #endif -->
+								<!-- #ifndef APP-PLUS-NVUE -->
+								<cover-view class="right-text">{{item.comment}}</cover-view>
+								<!-- #endif -->
+								
+								<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
+								
+								<!-- #ifdef APP-PLUS-NVUE -->
+								<text class="right-text">分享</text>
+								<!-- #endif -->
+								<!-- #ifndef APP-PLUS-NVUE -->
+								<cover-view class="right-text">分享</cover-view>
+								<!-- #endif -->
+								
 							</cover-view>
-						</cover-view>
-						<cover-view class="cover-view-right">
-							<cover-image :src="item.avater" class="avater img" @click.stop="tapAvater"></cover-image>
-							<!-- #ifdef APP-PLUS-NVUE -->
-							<text class="right-text-avater">+</text>
-							<text class="right-text"></text>
-							<!-- #endif -->
-							<!-- #ifndef APP-PLUS-NVUE -->
-							<cover-view class="right-text-avater">+</cover-view>
-							<cover-view class="right-text"></cover-view>
-							<!-- #endif -->
-							
-							<cover-image :src="item.check?'../../static/aixinRed.png':'../../static/aixin.png'" class="img" @click.stop="tapLove"></cover-image>
-							
-							<!-- #ifdef APP-PLUS-NVUE -->
-							<text class="right-text">{{item.like}}</text>
-							<!-- #endif -->
-							<!-- #ifndef APP-PLUS-NVUE -->
-							<cover-view class="right-text">{{item.like}}</cover-view>
-							<!-- #endif -->
-							
-							<cover-image src="../../static/xiaoxi.png" class="img" @click.stop="tapMsg(item)"></cover-image>
-							
-							<!-- #ifdef APP-PLUS-NVUE -->
-							<text class="right-text">{{item.comment}}</text>
-							<!-- #endif -->
-							<!-- #ifndef APP-PLUS-NVUE -->
-							<cover-view class="right-text">{{item.comment}}</cover-view>
-							<!-- #endif -->
-							
-							<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
-							
-							<!-- #ifdef APP-PLUS-NVUE -->
-							<text class="right-text">分享</text>
-							<!-- #endif -->
-							<!-- #ifndef APP-PLUS-NVUE -->
-							<cover-view class="right-text">分享</cover-view>
-							<!-- #endif -->
-							
-						</cover-view>
+						</block>
+						<image src="../../static/logo.png" v-else  class="video-box"></image>
 					</div>
-				
+
 			</swiper-item>
 		</swiper>
     </div>
@@ -115,7 +119,7 @@
 			
 		},
 		async mounted() {
-			let id = "http://img.kaiyanapp.com/f120ede658c867d475fa6191257d09b8.jpeg?imageMogr2/quality/60/format/jpg"
+			let id = "http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg"
 			await this.pushVideoList()
 			
 			this.index = this.videoList.reduce((total,item)=>{

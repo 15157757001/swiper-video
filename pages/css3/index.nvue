@@ -1,7 +1,7 @@
 <template>
 	<div class="page">
 		<div class="cover-view-center" v-if="distanceX==0">
-			<div :style="{ height: height,width: width }" ref="touch" @click="videoPlay(index)" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
+			<div :style="{ height: `${sysheight-60}px`,width: width }" ref="touch" @click="videoPlay(index)" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
 				<div class="cover-view-right" v-if="distanceX==0">
 					<image class="img" @click.stop="tapAvater"></image>
 					<text class="right-text"> </text>
@@ -118,8 +118,10 @@
 		async mounted() {
 			this.videoPlay(this.index)
 			await this.pushVideoList()
-
-			this.bindCurrentX(2,300) //滚动至4
+			this.$nextTick(()=>{
+				this.bindCurrentX(5,300) //滚动至4
+			})
+			
 			
 		},
 		onHide(){

@@ -29,9 +29,9 @@ export default {
 		//#ifdef APP-PLUS
 			plus.screen.lockOrientation("portrait-primary")
 		//#endif
-		this.sysheight = uni.getSystemInfoSync().screenHeight
+		this.sysheight = uni.getSystemInfoSync().windowHeight
 		this.height = `${this.sysheight}px` 
-		let width = uni.getSystemInfoSync().screenWidth 
+		let width = uni.getSystemInfoSync().windowWidth 
 		this.width = `${width}px` 
 	},
 	methods:{

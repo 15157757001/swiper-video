@@ -2,19 +2,30 @@
 	<view class="video">
 		<video :src="src" :controls="controls" :show-play-btn="false" 
 			:style="{ height: height }" :loop="true" @waiting="waiting"
-			:enable-progress-gesture="false" :objectFit="objectFit"
+			:enable-progress-gesture="false" :objectFit="objectFit" @ended="playEnd"
 			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate">
 		</video>
 		<cover-view class="icon-view" v-if="!play&&!playFirst"><text class="icon" style="color:#FFF">&#xe896;</text></cover-view>
 		<cover-image class="img" :style="{ height: height }" :src="poster" v-if="poster!=''&&playFirst"></cover-image>
 		<cover-view class="top"></cover-view>
 		<cover-view class="bottom"></cover-view>
+		<!-- #ifdef APP-PLUS -->
+		<cover-view class="slider-view">
+			<chunLei-slider :max="duration" :value="time" :style="{width:`${360}px`}" :screenLeft="120" :width="360" @change="changeCurrent"></chunLei-slider>
+		</cover-view>
+		<!-- #endif -->
+		<!-- #ifndef APP-PLUS -->
 		<cover-view class="progressBar" :style="{ width: barWidth }"></cover-view>
+		<!-- #endif -->
 	</view>
 </template>
 
 <script>
+	import chunLeiSlider from './chunLei-slider/chunLei-slider.nvue';
 	export default{ 
+		components:{
+			chunLeiSlider
+		},
 		props:{
 			controls:{
 				type:Boolean,
@@ -65,7 +76,7 @@
 			var domModule = weex.requireModule('dom');
 			domModule.addRule('fontFace', {
 				'fontFamily': "texticons",
-				'src': "url('/static/chunlei-video/text-icon.ttf')"
+				'src': "url('//static/chunlei-video/text-icon.ttf')"
 			});
 			// #endif
 		},
@@ -74,11 +85,20 @@
 			
 		},
 		methods:{
+			//拖动滑块
+			changeCurrent(e){
+				this.time = e.detail.value
+				this.videoCtx.seek(this.time)
+			},
+			playEnd(){
+				this.$emit('playEnd')
+			},
 			timeupdate(event){
 				this.duration = event.detail.duration
 				if(!this.play) return
-				if(this.time>=this.duration) this.time=0
+				if(this.time>=event.detail.duration) this.time=0
 				this.time = event.detail.currentTime
+				this.$emit('timeupdate',this.time)
 			},
 			videoPlay(){
 				if(this.play){
@@ -177,6 +197,12 @@
 		width: 750rpx;
 		height: 300rpx;
 	}
+	.slider-view{
+		position: absolute;
+		left: 0;
+		bottom: 30px;
+		width: 750rpx;
+	}
 	.progressBar{
 		border-radius: 2upx;
 		height: 4upx;
@@ -184,7 +210,7 @@
 		z-index: 999999;
 		position: absolute;
 		left: 0;
-		bottom: 40upx;
+		bottom: 30px;
 		//#ifndef APP-PLUS-NVUE
 		animation: flicker 4s linear infinite;
 		animation-direction:alternate;
