@@ -271,7 +271,7 @@
 	
 	.cover-view-right{
 		position: absolute;
-		bottom: 160upx;
+		top: 400upx;
 		right: 20upx;
 		z-index: 9999;
 	}
