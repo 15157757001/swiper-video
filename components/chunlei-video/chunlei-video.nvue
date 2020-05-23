@@ -10,21 +10,43 @@
 		<cover-view class="top"></cover-view>
 		<cover-view class="bottom"></cover-view>
 		<!-- #ifdef APP-PLUS -->
+		<cover-view class="danmu-view">
+			<chunLei-danmu :danmuList="danmuList" :width="750"  :current="time" ref="danmu"></chunLei-danmu>
+		</cover-view>
+		<!-- #endif -->
+		<!-- #ifndef MP-WEIXIN -->
 		<cover-view class="slider-view">
 			<chunLei-slider :max="duration" :value="time" :style="{width:`${360}px`}" :screenLeft="120" :width="360" @change="changeCurrent"></chunLei-slider>
 		</cover-view>
 		<!-- #endif -->
-		<!-- #ifndef APP-PLUS -->
+		<!-- #ifdef MP-WEIXIN -->
 		<cover-view class="progressBar" :style="{ width: barWidth }"></cover-view>
 		<!-- #endif -->
 	</view>
 </template>
 
 <script>
+	
 	import chunLeiSlider from './chunLei-slider/chunLei-slider.nvue';
+	//#ifdef APP-NVUE
+	import chunLeiDanmu from './chunLei-danmu/chunLei-danmu.nvue';
+	//#endif
+	function debounce(fn){
+		let timer
+		return function(){
+			if(timer) clearTimeout(timer)
+			timer = setTimeout(()=>{
+				fn.apply(this,arguments)
+				timer = null
+			},100)
+		}
+	}
 	export default{ 
 		components:{
-			chunLeiSlider
+			chunLeiSlider,
+			//#ifdef APP-NVUE
+			chunLeiDanmu
+			//#endif
 		},
 		props:{
 			controls:{
@@ -62,13 +84,17 @@
 			poster:{ //视频封面的图片
 				type:String,
 				default:''
+			},
+			danmuList:{
+				type:Array,
+				default:[]
 			}
 		},
 		data(){
 			return{
 				time:0,
 				duration:0,
-				playFirst:true
+				playFirst:true,
 			}
 		},
 		beforeCreate() {
@@ -82,7 +108,6 @@
 		},
 		mounted() {
 			this.videoCtx = uni.createVideoContext(`video_${this.src}`,this)
-			
 		},
 		methods:{
 			//拖动滑块
@@ -95,7 +120,7 @@
 			},
 			timeupdate(event){
 				this.duration = event.detail.duration
-				if(!this.play) return
+				if(!this.play) this.videoCtx.pause()
 				if(this.time>=event.detail.duration) this.time=0
 				this.time = event.detail.currentTime
 				this.$emit('timeupdate',this.time)
@@ -118,9 +143,8 @@
 			}
 		},
 		watch:{
-			play(newVal,oldVal){
-				this.videoPlay()
-			},
+			//防抖 防止视频播放暂停太快
+			play: debounce(function (newVal,oldVal){this.videoPlay()}),
 			startTime:{
 				immediate: true,
 				handler(newVal,oldVal){
@@ -228,4 +252,9 @@
 	
 	}
 	//#endif
+	.danmu-view{
+		position: absolute;
+		top:0;
+		height: 160px;
+	}
 </style>

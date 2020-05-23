@@ -1,0 +1,170 @@
+<template>
+	<div class="danmu" :style="{ width: `${width}px` }">
+		<div class="danmu-row" :style="{ width: `${width}px` }">
+			<div :style="{ left:`${width}px`}" ref="move" :id="item._id" v-for="item in danmuList1" :key="item._id" class="moveDiv">
+				<image :src="item.avatar" class="img" v-if="item.avatar"></image>
+				<text :class="`${platform}-title`" :style="{ color:item.color?item.color:'#fff' }">{{item.text}}</text>
+			</div>
+		</div>
+		<div class="danmu-row" :style="{ width: `${width}px` }">
+			<div :style="{ left:`${width}px`}" ref="move" :id="item._id" v-for="item in danmuList2" :key="item._id" class="moveDiv">
+				<image :src="item.avatar" class="img" v-if="item.avatar"></image>
+				<text :class="`${platform}-title`" :style="{ color:item.color?item.color:'#fff' }">{{item.text}}</text>
+			</div>
+		</div>
+		<div class="danmu-row" :style="{ width: `${width}px` }">
+			<div :style="{ left:`${width}px`}" ref="move" :id="item._id" v-for="item in danmuList3" :key="item._id" class="moveDiv">
+				<image :src="item.avatar" class="img" v-if="item.avatar"></image>
+				<text :class="`${platform}-title`" :style="{ color:item.color?item.color:'#fff' }">{{item.text}}</text>
+			</div>
+		</div>
+		<div class="danmu-row" :style="{ width: `${width}px` }">
+			<div :style="{ left:`${width}px`}" ref="move" :id="item._id" v-for="item in danmuList4" :key="item._id" class="moveDiv">
+				<image :src="item.avatar" class="img" v-if="item.avatar"></image>
+				<text :class="`${platform}-title`" :style="{ color:item.color?item.color:'#fff' }">{{item.text}}</text>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+	const animation = weex.requireModule('animation');
+	const modal = weex.requireModule('modal');
+	export default{
+		props:{
+			width:{
+				type:Number,
+				default:0
+			},
+			danmuList:{ //弹幕
+				type:[Array],
+				default:()=>[]
+			},
+			platform:{
+				type:String,
+				default:'android'
+			},
+			current:{
+				type:Number,
+				default:0
+			}
+		},
+		data(){
+			return{
+				danmuList1:[],
+				danmuList2:[],
+				danmuList3:[],
+				danmuList4:[],
+			}
+		},
+		methods:{
+			promise(){
+				let promise = new Promise((resolve,reject)=>{
+					setTimeout(()=>{
+						resolve()
+					},100)
+				})
+				return promise
+			},
+			cleanDanmu(){
+				this.danmuList1 = []
+				this.danmuList2 = []
+				this.danmuList3 = []
+				this.danmuList4 = []
+			},
+			randomRange(min, max) { // min最小值，max最大值
+			    return Math.floor(Math.random() * (max - min)) + min;
+			},
+			animationText(id,distance,fn){
+				let el
+				let elList = this.$refs.move
+				for (let item of elList) {
+					if(item.attr.id == id){
+						el = item
+					}
+					
+				}
+				animation.transition(el, {
+					styles: {
+						transform: `translate( ${distance}px, 0px)`,
+					},
+					duration: 20000, //ms
+					timingFunction: 'ease',
+					delay: 0 //ms
+					}, () => {
+						fn()
+					}
+				)
+			}
+		},
+		watch:{
+			danmuList:{
+				immediate:true,
+				handler(newVal,oldVal){
+					for (let key in newVal) {
+						newVal[key]._id = key
+					}
+				}
+			},
+			current:{
+				handler:async function(newVal,oldVal){
+					
+					//间隔0.25
+					if(Math.abs(newVal-oldVal)>=0.24){
+						for (let item of this.danmuList) {
+							if( item.time > Math.floor(newVal*1) && item.time <= Math.floor(newVal*1+ 0.25) ) {
+								let num = this.randomRange(1,5)
+								this[`danmuList${num}`].push(item)
+								await this.promise()
+								
+								//开始动画
+								this.animationText(item._id,-this.width*2,()=>{
+									let index
+									//删除动画后的text
+									for (let key in this[`danmuList${num}`]) {
+										if(this[`danmuList${num}`][key]._id==item._id){
+											index = key
+										}
+									}
+									this[`danmuList${num}`].splice(index,1)
+								})
+							}
+						}
+					}
+					
+				}
+			},
+		}
+	}
+</script>
+
+<style>
+.danmu{
+	height: 160px;
+	flex-direction: column;
+	
+}
+.danmu-row{
+	position: relative;
+	height: 40px;
+	flex-direction: row;
+	
+}
+.moveDiv{
+	position: absolute;
+	flex-direction: row;
+	justify-content: center;
+}
+.android-title{
+	font-size: 24px;
+}
+.img{
+	width: 30px;
+	height: 30px;
+	margin-left: 10px;
+	border-radius: 15px;
+}
+.ios-title{
+	font-size: 24px;
+}
+</style>

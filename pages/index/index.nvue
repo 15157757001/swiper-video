@@ -13,7 +13,7 @@
 							<chunlei-video class="video" :src="item.src"  :height="height" :width="width"
 								:play="item.flag" v-if="Math.abs(index-idx)<=1" :gDuration="item.duration"
 								:initialTime="item.initialTime" @pause="pauseVideo" :objectFit="item.objectFit"
-								@timeupdate="wacthTime" @playEnd="playEnd"
+								@playEnd="playEnd" :danmuList="danmuList"
 							>
 							</chunlei-video>
 							
@@ -75,7 +75,7 @@
 								
 							</cover-view>
 						</block>
-						<image src="../../static/logo.png" v-else  class="video-box"></image>
+						<image src="../../static/logo.png" :style="{ height: height }" v-else  class="video-box"></image>
 					</div>
 
 			</swiper-item>
@@ -98,7 +98,13 @@
 				height:'667px',
 				index:0,
 				width:'',
-				oldIndex:0
+				oldIndex:0,
+				danmuList:[
+					{text: '发条弹幕0',color: '#fff',time: 2,avatar:'../../static/avatar.png'},
+					{text: '发条弹幕1',color: '#fff',time: 3,avatar:'../../static/avatar.png'},
+					{text: '发条弹幕2',color: '#fff',time: 4,avatar:'../../static/avatar.png'},
+					{text: '发条弹幕3',color: '#fff',time: 5,avatar:'../../static/avatar.png'},
+				],
 			}
         },
 		created(){
@@ -119,6 +125,7 @@
 			
 		},
 		async mounted() {
+			//设置id 通过id轮到相应位置
 			let id = "http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg"
 			await this.pushVideoList()
 			
@@ -267,6 +274,7 @@
     }
 	.video-box{
 		flex: 1;
+		width: 750rpx;
 	}
 	.cover-view-center{
 		position: absolute;

@@ -75,8 +75,9 @@
 		},
 		methods:{
 			sliderTouch(e){
+				console.log(e)
 				let touches = e.changedTouches[0]
-				this.leftWidth = touches[this.direction]*this.ratio-this.screenLeft
+				this.leftWidth = (touches[this.direction]||touches['clientX'])*this.ratio-this.screenLeft
 				this.leftWidth = this.leftWidth > this.currentWidth? this.currentWidth : this.leftWidth
 				this.leftWidth = this.leftWidth < 0? 0 : this.leftWidth
 				this.blockTouchEnd()
@@ -86,13 +87,14 @@
 			blockTouchStart(e) {
 				this.touch = true
 				this.oldLeftWidth = this.leftWidth
-				this.oldToucesX = e.changedTouches[0][this.direction];
+				this.oldToucesX = e.changedTouches[0][this.direction]||e.changedTouches[0]['clientX'];
 			},
 			// 计算方向
 			blockTouchMove(e) {
 				let newToucesX
 				
-				newToucesX= e.changedTouches[0][this.direction];
+				newToucesX= e.changedTouches[0][this.direction]||e.changedTouches[0]['clientX'];
+				
 				this.leftWidth = this.iosDirection*(newToucesX - this.oldToucesX)*this.ratio+ this.oldLeftWidth
 				this.leftWidth = this.leftWidth > this.currentWidth? this.currentWidth : this.leftWidth
 				this.leftWidth = this.leftWidth < 0? 0 : this.leftWidth
