@@ -129,8 +129,8 @@ export default {
 					props: [
 						{element:swiperRef, property:'transform.translateY',expression: touch_origin},
 						{element:swiperRef, property:'transform.translateX',expression: `${move}!=0 && ${move}*x>0 ?x+${this.distanceX} : ${this.distanceX}`},
-						{element:leftRef, property:'transform.translateX',expression: `${move}!=0&& ${move*this.distanceX}<=0?x+${this.distanceX} : ${this.distanceX}`},
-						{element:rightRef, property:'transform.translateX',expression: `${move}!=0&& ${move*this.distanceX}<=0?x+${this.distanceX} : ${this.distanceX}`}
+						{element:leftRef, property:'transform.translateX',expression: `${move}!=0&& ${move*this.distanceX}<=0&&x+${this.distanceX}<393?x+${this.distanceX} : ${this.distanceX}`},
+						{element:rightRef, property:'transform.translateX',expression: `${move}!=0&& ${move*this.distanceX}<=0&&x+${this.distanceX}>-393?x+${this.distanceX} : ${this.distanceX}`}
 					]
 				}, (e) => {
 					if(e.state === 'end') {
@@ -148,7 +148,8 @@ export default {
 							
 							this.bindTiming(distance,e.deltaY,quickMove)
 						}
-						if(move!=0&& move*this.distanceX<=0&& Math.abs(e.deltaX)>this.startDistance){
+					
+						if(move!=0&& move*this.distanceX<=0&& e.deltaX*this.distanceX<=0&& Math.abs(e.deltaX)>this.startDistance){
 							const distance = this.distanceX + e.deltaX
 							
 							this.bindTimingX(distance,e.deltaX)
@@ -296,7 +297,7 @@ export default {
 			})
 		},
 		pauseVideo(val){
-			if(typeof this.videoList[this.oldIndex].initialTime !='undefined') this.videoList[this.oldIndex].initialTime = val
+			 this.videoList[this.oldIndex].initialTime = val
 		},
 		clickVideo(){
 			this.videoList[this.index].flag = !this.videoList[this.index].flag
