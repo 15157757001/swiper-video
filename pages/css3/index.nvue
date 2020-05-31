@@ -1,7 +1,7 @@
 <template>
 	<div class="page">
 		<div class="cover-view-center" v-if="distanceX==0">
-			<div :style="{ height: `${sysheight-60}px`,width: width }" ref="touch" @click="videoPlay(index)" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
+			<div :style="{ height: `${sysheight-60}px`,width: width }" ref="touch" @click="clickVideo(index)" @touchstart="ListTouchStart" @touchmove="ListTouchMove">
 				<div class="cover-view-right" v-if="distanceX==0">
 					<image class="img" @click.stop="tapAvater"></image>
 					<text class="right-text"> </text>
@@ -17,10 +17,11 @@
 		<div class="swiper" ref="swiper">
 			<block v-for="(item, idx) in videoList" :key="idx">
 				<div class="video-box" :style="{ height: height }">
-					<block v-if="Math.abs(index-idx)<=1">
+					<!-- 视频渲染数预加载数影响性能 -->
+					<block v-if="Math.abs(index-idx)<=1"> 
 						<chunlei-video class="video" :src="item.src"  :height="height" :width="width" 
 							:play="item.flag" :gDuration="item.duration" :objectFit="item.objectFit"
-							:initialTime="item.initialTime" @pause="pauseVideo" :danmuList="danmuList"
+							:initialTime="item.initialTime" @pause="pauseVideo" :rotateImg="`//static/avatar.png`" :danmuList="danmuList"
 						>
 						</chunlei-video>
 						<cover-view class="cover-view-left">
@@ -38,6 +39,7 @@
 							<cover-image src="../../static/share-fill.png" class="img" @click.stop="tapShare"></cover-image>
 							<text class="right-text">分享</text>
 						</cover-view>
+						
 					</block>
 				</div>
 				
@@ -76,14 +78,14 @@
 				],
 				videoList:[
 					{
-						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=164016&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
+						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=164015&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
 						content:'为什么要选择uni-app？',
 						flag:false,
 						check:false,
 						like:'10w',
 						comment:'1045',
 						avater:'../../static/logo.png',
-						initialTime:0,
+						initialTime:20,
 						at:'Dcloud',
 						duration:841,
 						objectFit:'fill'
@@ -101,7 +103,7 @@
 						duration:149
 					},
 					{
-						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=164016&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
+						src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=164111&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
 						content:'无辣不欢，你没见过小龙虾的大场面',
 						flag:false,
 						check:false,
@@ -124,9 +126,9 @@
 		async mounted() {
 			this.videoPlay(this.index)
 			await this.pushVideoList()
-			this.$nextTick(()=>{
-				this.bindCurrentX(5,300) //滚动至4
-			})
+			// this.$nextTick(()=>{
+			// 	this.bindCurrentX(5,300) //滚动至4
+			// })
 			
 			
 		},
@@ -205,7 +207,7 @@
 					icon:'none',
 					title:`分享索引为${this.index}的视频`
 				})
-			}
+			},
 		}
 	}
 </script>

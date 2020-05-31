@@ -3,7 +3,7 @@
 		<div class="mask" @click="hide()"></div>
 		<div class="bottom" >
 			<div v-if="!flag"></div>
-			<input class="input" focus @keyboardheightchange="heightChange" :cursor-spacing="space" v-model="message" :placeholder="placeholder" v-if="flag"/>
+			<input class="input" ref="input" @keyboardheightchange="heightChange" :cursor-spacing="space" v-model="message" :placeholder="placeholder" v-if="flag"/>
 			<div class="bottomBtn-box">
 				<div class="bottomBtn" @click="clickSubmit" :style="{backgroundColor:message!=''?'#00CAFC':'#B1EFFE'}">
 					<text class="bottom-text">发送</text>
@@ -33,7 +33,12 @@
 					if(e.platform=='ios') this.space = -50
 				}
 			})
-			uni.$on('showInput', () => {this.flag = true})  
+			uni.$on('showInput', () => {
+				this.flag = true
+				this.$nextTick(()=>{
+					this.$refs.input.focus()
+				})
+			})  
 		},
 		destroyed() {
 			uni.$off('showInput')
@@ -80,19 +85,20 @@
 	.bottom{
 		box-shadow: 0 -1px 4px 1px rgba(0,0,0,0.1);
 		background-color: #fff;
-		padding: 40rpx 40rpx 0 40rpx;
+		padding: 30rpx 30rpx 0 30rpx;
 		align-items: center;
 		flex-direction: row;
 		justify-content: space-between;
 	}
 	.input{
 		flex: 1;
-		height: 140rpx;
-		padding: 0 0 90rpx 0;
+		font-size: 16px;
+		height: 90rpx;
+		padding: 0 0 50rpx 0;
 	}
 	.bottomBtn-box{
 		height: 140rpx;
-		padding: 0 0 90rpx 0;
+		padding: 10rpx 0 0 0;
 	}
 	.bottomBtn{
 		padding: 5rpx 15rpx;

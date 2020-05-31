@@ -282,9 +282,9 @@ export default {
 							item.flag = false
 						}
 						this.index = -this.distance/this.sysheight
-						setTimeout(()=>{
-							this.videoList[this.index].flag = true
-						},200)
+
+						this.videoList[this.index].flag = true
+
 						
 						//加载视频
 						if(this.videoList.length - this.index - 1 <= this.playCount){
@@ -297,6 +297,7 @@ export default {
 			})
 		},
 		pauseVideo(val){
+			console.log(val)
 			 this.videoList[this.oldIndex].initialTime = val
 		},
 		clickVideo(){

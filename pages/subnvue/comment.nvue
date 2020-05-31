@@ -15,13 +15,13 @@
 							<image class="card-image" src="../../static/logo.png"></image>
 							<div class="card-content">
 								<div class="card-top">
-									<text class="card-name" @click="replyName(item.name)">{{item.name}}</text>
+									<text class="card-name size-14" @click="replyName(item.name)">{{item.name}}</text>
 									<text class="color-grey">{{item.time}}</text>
 								</div>
 								<div class="card-message">
-									<text class="margin-right" v-if="item.reply">回复</text>
-									<text class="color-bule margin-right" v-if="item.reply" @click="replyName(item.reply)">{{item.reply}}:</text>
-									<text class="margin-right card-text">{{item.message}}</text>
+									<text class="margin-right size-14" v-if="item.reply">回复</text>
+									<text class="color-bule margin-right size-14" v-if="item.reply" @click="replyName(item.reply)">{{item.reply}}:</text>
+									<text class="card-text size-14" :style="{height:`${Math.ceil(item.message.length/15)*30}upx`}">{{item.message}}</text>
 								</div>
 								<!-- <div class="card-bottom">
 									<text class="color-grey">查看7条回复></text>
@@ -40,8 +40,11 @@
 				
 			</scroll-view>
 			<div class="bottom flex"  @click="showInput">
-				<input v-if="flag" class="input" @click="showInput" disabled v-model="message" :placeholder="placeholder"/>
-				
+				<div class="input" v-if="flag">
+					<text class="color-gray" style="color: #9C9C9C;">{{placeholder}}</text>
+				</div>
+				<!-- <input v-if="flag" class="input" @click="showInput" disabled v-model="message" :placeholder="placeholder"/>
+				 -->
 			</div>
 			
 		</div>
@@ -62,7 +65,7 @@
 				placeholder:'来聊聊天把',
 				reply:'',
 				dataList:[
-					{name:'张三',time:'04-03',message:'下载来试试',reply:'春雷'},
+					{name:'张三',time:'04-03',message:'下载来试试喀喀喀喀喀喀喀喀喀酷酷酷酷酷酷酷酷',reply:'春雷'},
 					{name:'张三',time:'04-03',message:'下载来试试',reply:'春雷'}
 				]
 			}
@@ -146,7 +149,7 @@
 	.iconfont{
 		font-family: "iconfont";
 		font-family: iconfont;
-		font-size: 18px;
+		font-size: 16px;
 	}
 	.color-gray{
 		color: #515352;
@@ -194,6 +197,9 @@
 		flex-direction: row;
 		justify-content: space-between;
 	}
+	.size-14{
+		font-size: 14px;
+	}
 	.title{
 		flex: 1;
 		align-items: center;
@@ -206,17 +212,18 @@
 	
 	/* 底部输入框 */
 	.bottom{
-		box-shadow: 0 -1px 4px 1px rgba(0,0,0,0.1);
-		
 		align-items: center;
 		flex-direction: row;
+		background-color: red;
 		justify-content: space-between;
 	}
 	.input{
+		box-shadow: 0 -1px 4px 1px rgba(0,0,0,0.1);
+		font-size: 16px;
 		flex-direction: row;
 		align-items: center;
 		flex: 1;
-		height: 140rpx;
+		height: 100rpx;
 		padding: 30rpx;
 		background-color: #fff;
 	}
@@ -250,16 +257,17 @@
 		
 	}
 	.card-image{
-		height: 80rpx;
-		width: 80rpx;
+		height: 70rpx;
+		width: 70rpx;
 		border-radius: 50%;
-		margin-right: 30rpx;
+		margin-right: 35rpx;
 	}
 	.card-top{
 		height: 80rpx;
 		justify-content: space-between;
 	}
 	.card-message{
+		
 		padding: 20rpx 0;
 		flex-direction: row;
 		width: 600rpx;

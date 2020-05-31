@@ -1,3 +1,4 @@
+
 <template>
     <div class="page" :style="{ height: height }">
 		<swiper
@@ -7,7 +8,7 @@
 			@animationfinish="animationFinish"
 			:current="index">
 			<swiper-item v-for="(item, idx) in videoList" :key="idx" class="swiper-item">
-					
+					<!-- 视频渲染数预加载数影响性能 -->
 					<div v-if="Math.abs(index-idx)<=1" class="video-box">
 						<block v-if="item.src">
 							<chunlei-video class="video" :src="item.src"  :height="height" :width="width"
@@ -126,7 +127,7 @@
 		},
 		async mounted() {
 			//设置id 通过id轮到相应位置
-			let id = 2
+			let id = "http://img.kaiyanapp.com/255365dbfc2622930eb0cdb33e43abf0.jpeg?imageMogr2/quality/60/format/jpg"
 			await this.pushVideoList()
 			
 			this.index = this.videoList.reduce((total,item)=>{
@@ -169,58 +170,37 @@
 				
 			},
 			pushVideoList(){
-				//模拟请求
 				let promise = new Promise((resolve,reject)=>{
-					setTimeout(()=>{
-						let videoGroup = [
-							{
-								src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=164012&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
-								content:'为什么要选择uni-app？',
-								flag:false,
-								check:false,
-								like:'10w',
-								comment:'1045',
-								avater:'../../static/logo.png',
-								initialTime:0,
-								at:'Dcloud',
-								duration:841,
-								objectFit:'fill',
-								id:1
-							},
-							{
-								src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=129764&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
-								content:'广告有反转：危机感十足！一辆车都比你靠谱',
-								flag:false,
-								check:true,
-								like:'7w',
-								comment:'1045',
-								avater:'http://img.kaiyanapp.com/e44ed5fcfa424ba35761ce5f1339bc16.jpeg?imageMogr2/quality/60/format/jpg',
-								initialTime:0,
-								at:'欧美广告精选',
-								duration:149,
-								id:2
-							},
-							{
-								src:'http://baobab.kaiyanapp.com/api/v1/playUrl?vid=164016&resourceType=video&editionType=default&source=aliyun&playUrlType=url_oss',
-								content:'无辣不欢，你没见过小龙虾的大场面',
-								flag:false,
-								check:false,
-								like:'7w',
-								comment:'1045',
-								avater:'http://img.kaiyanapp.com/7af2bb1bc134fb1115d48f05e9d317f0.jpeg?imageMogr2/quality/60/format/jpg',
-								initialTime:0,
-								at:'世界美食荟萃',
-								duration:1162,
-								id:3
+					uni.request({
+						url: 'https://api.apiopen.top/videoRecommend?id=127397',
+						success: (res) => {
+							let videoGroup = []
+							for (let item of res.data.result) {
+								if(item.type == 'videoSmallCard'){
+									videoGroup.push({
+										src:item.data.playUrl,
+										content:item.data.title,
+										flag:false,
+										check:false,
+										like:'7w',
+										comment:'1045',
+										at:item.data.author.name,
+										id:item.data.author.icon,
+										avater:item.data.author.icon,
+										initialTime:0,
+										duration:item.data.duration
+									})
+								}
 							}
-						]
-						let len = this.videoList.filter(item=>item.src).length
-						for(let i = len;i<len+videoGroup.length;i++){
-							this.$set(this.videoList,i,videoGroup[i-len])
 							
+							let len = this.videoList.filter(item=>item.src).length
+							for(let i = len;i<len+videoGroup.length;i++){
+								this.$set(this.videoList,i,videoGroup[i-len])
+								
+							}
+							resolve()
 						}
-						resolve()
-					},500)
+					})
 				}) 
 				return promise
 			},

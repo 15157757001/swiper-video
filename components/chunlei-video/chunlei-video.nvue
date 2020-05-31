@@ -1,8 +1,8 @@
 <template>
 	<view class="video">
-		<video :src="src" :controls="controls" :show-play-btn="false" 
-			:style="{ height: height }" :loop="true" @waiting="waiting"
-			:enable-progress-gesture="false" :objectFit="objectFit" @ended="playEnd"
+		<video :src="src" :controls="controls" :show-play-btn="false" :muted="!load||!play"
+			:style="{ height: height }" :loop="true" @waiting="waiting" @play="continuePlay"
+			:enable-progress-gesture="false" :objectFit="objectFit" @ended="playEnd":initial-time="startTime"
 			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate">
 		</video>
 		<cover-view class="icon-view" v-if="!play&&!playFirst"><text class="icon" style="color:#FFF">&#xe896;</text></cover-view>
@@ -16,8 +16,9 @@
 		<!-- #endif -->
 		<!-- #ifndef MP-WEIXIN -->
 		<cover-view class="slider-view">
-			<chunLei-slider :max="duration" :value="time" :style="{width:`${360}px`}" :screenLeft="120" :width="360" @change="changeCurrent"></chunLei-slider>
+			<chunLei-slider :max="duration" :value="time" :style="{width:`${380}px`}" :screenLeft="120" :width="380" @change="changeCurrent"></chunLei-slider>
 		</cover-view>
+		<cover-image :src="rotateImg" class="rotate-img" :style="{transform:`rotate(${time*20}deg)`}"></cover-image>
 		<!-- #endif -->
 		<!-- #ifdef MP-WEIXIN -->
 		<cover-view class="progressBar" :style="{ width: barWidth }"></cover-view>
@@ -31,16 +32,6 @@
 	//#ifdef APP-NVUE
 	import chunLeiDanmu from './chunLei-danmu/chunLei-danmu.nvue';
 	//#endif
-	function debounce(fn){
-		let timer
-		return function(){
-			if(timer) clearTimeout(timer)
-			timer = setTimeout(()=>{
-				fn.apply(this,arguments)
-				timer = null
-			},100)
-		}
-	}
 	export default{ 
 		components:{
 			chunLeiSlider,
@@ -54,6 +45,10 @@
 				default:false
 			},
 			src:{
+				type:String,
+				default:''
+			},
+			rotateImg:{
 				type:String,
 				default:''
 			},
@@ -95,6 +90,8 @@
 				time:0,
 				duration:0,
 				playFirst:true,
+				load:false,
+				timer:null
 			}
 		},
 		beforeCreate() {
@@ -108,8 +105,18 @@
 		},
 		mounted() {
 			this.videoCtx = uni.createVideoContext(`video_${this.src}`,this)
+			setTimeout(()=>{this.videoCtx.play();},200)
 		},
 		methods:{
+			continuePlay(){
+				if(!this.load){
+					setTimeout(()=>{
+						this.load = true
+						this.videoPlay()
+					},1000)
+					
+				}
+			},
 			//拖动滑块
 			changeCurrent(e){
 				this.time = e.detail.value
@@ -120,31 +127,27 @@
 			},
 			timeupdate(event){
 				this.duration = event.detail.duration
-				if(!this.play) this.videoCtx.pause()
 				if(this.time>=event.detail.duration) this.time=0
 				this.time = event.detail.currentTime
 				this.$emit('timeupdate',this.time)
 			},
-			videoPlay(){
-				if(this.play){
-					this.videoCtx.play();
-					if(this.playFirst){
-						this.videoCtx.seek(this.startTime)
+			videoPlay:function(){
+				if(this.timer) clearTimeout(this.timer)
+				this.timer = setTimeout(()=>{
+					if(this.play){
+						this.videoCtx.play();
 						this.playFirst = false
-					} 
-				}else{
-					this.videoCtx.pause();
-					this.$emit('pause',this.time)
-				}
+					}else{
+						this.videoCtx.pause();
+						this.$emit('pause',this.time)
+					}
+				})
 				
 			},
-			waiting(){
-				
-			}
 		},
 		watch:{
 			//防抖 防止视频播放暂停太快
-			play: debounce(function (newVal,oldVal){this.videoPlay()}),
+			play: function (newVal,oldVal){if(this.load) this.videoPlay()},
 			startTime:{
 				immediate: true,
 				handler(newVal,oldVal){
@@ -256,5 +259,13 @@
 		position: absolute;
 		top:0;
 		height: 160px;
+	}
+	.rotate-img{
+		width: 90rpx;
+		height: 90rpx;
+		position: absolute;
+		bottom: 100rpx;
+		right: 20rpx;
+		border-radius: 45rpx;
 	}
 </style>
