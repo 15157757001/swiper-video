@@ -16,7 +16,6 @@
 							"bottom":"0",
 							"background":"transparent",
 							"zindex":1
-							
 						}
 					},{
 						"id": "input-box",
@@ -48,6 +47,7 @@
 				// 			"bottom":"0",
 				// 			"background":"transparent",
 				// 			"zindex":1
+							
 				// 		}
 				// 	},{
 				// 		"id": "input-box",

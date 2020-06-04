@@ -162,6 +162,7 @@ export default {
 			
 		},
 		bindTiming(distance,Y,quickMove){
+			BindingX.unbindAll()
 			// 开始执行动画
 			this.scroll = true
 			let swiperRef = this.getEl(this.$refs.swiper)
@@ -179,11 +180,11 @@ export default {
 				// 往上下拖动超过一半时
 				final_Y = this.distance + (Y>0?1:-1) *this.sysheight
 				changed_Y= final_Y - distance// 计算出需要位置的值
-				translate_Y_origin = `easeOutExpo(t,${distance},${changed_Y},300)` // 运动曲线为easeOutExpo
+				translate_Y_origin = `easeOutExpo(t,${distance},${changed_Y},900)` // 运动曲线为easeOutExpo
 			}
 			let result = BindingX.bind({
 				eventType:'timing',       // 结束的时候是没有任何监听的 用 timing 来做定时的动画
-				exitExpression:"t>300",  // 当时间超过 300ms 结束动画
+				exitExpression:"t>600",  // 当时间超过 300ms 结束动画
 				props: [
 					{element:swiperRef, property:'transform.translateY',expression:translate_Y_origin},
 					]
@@ -297,7 +298,6 @@ export default {
 			})
 		},
 		pauseVideo(val){
-			console.log(val)
 			 this.videoList[this.oldIndex].initialTime = val
 		},
 		clickVideo(){

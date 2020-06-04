@@ -1,7 +1,7 @@
 <template>
 	<view class="video">
 		<video :src="src" :controls="controls" :show-play-btn="false" :muted="!load||!play"
-			:style="{ height: height }" :loop="true" @waiting="waiting" @play="continuePlay"
+			:style="{ height: height }" :loop="true" @play="continuePlay"
 			:enable-progress-gesture="false" :objectFit="objectFit" @ended="playEnd":initial-time="startTime"
 			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate">
 		</video>
@@ -105,7 +105,9 @@
 		},
 		mounted() {
 			this.videoCtx = uni.createVideoContext(`video_${this.src}`,this)
+			//#ifndef MP-WEIXIN
 			setTimeout(()=>{this.videoCtx.play();},200)
+			// #endif
 		},
 		methods:{
 			continuePlay(){
