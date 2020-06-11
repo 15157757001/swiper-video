@@ -114,7 +114,15 @@
 				if(!this.load){
 					setTimeout(()=>{
 						this.load = true
-						this.videoPlay()
+						if(this.timer) clearTimeout(this.timer)
+						this.timer = setTimeout(()=>{
+							if(this.play){
+								this.videoCtx.play();
+								this.playFirst = false
+							}else{
+								this.videoCtx.pause();
+							}
+						})
 					},1000)
 					
 				}
