@@ -247,6 +247,7 @@
 				if(typeof this.videoList[this.oldIndex].initialTime !='undefined') this.videoList[this.oldIndex].initialTime = val
 			},
 			clickVideo(){
+				this.oldIndex = this.index
 				this.videoList[this.index].flag = !this.videoList[this.index].flag
 			}
         },

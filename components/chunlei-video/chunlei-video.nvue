@@ -1,10 +1,11 @@
 <template>
 	<view class="video">
 		<video :src="src" :controls="controls" :show-play-btn="false" :muted="!load||!play"
-			:style="{ height: height }" :loop="true" @play="continuePlay"
-			:enable-progress-gesture="false" :objectFit="objectFit" @ended="playEnd":initial-time="startTime"
+			:style="{ height: height }" :loop="true" @play="continuePlay" autoplay
+			:enable-progress-gesture="false" :objectFit="objectFit" @ended="playEnd" :initial-time="startTime"
 			:id="`video_${src}`" ref="`video_${src}`" class="video" @timeupdate="timeupdate">
 		</video>
+	
 		<cover-view class="icon-view" v-if="!play&&!playFirst"><text class="icon" style="color:#FFF">&#xe896;</text></cover-view>
 		<cover-image class="img" :style="{ height: height }" :src="poster" v-if="poster!=''&&playFirst"></cover-image>
 		<cover-view class="top"></cover-view>
@@ -105,12 +106,10 @@
 		},
 		mounted() {
 			this.videoCtx = uni.createVideoContext(`video_${this.src}`,this)
-			//#ifndef MP-WEIXIN
-			setTimeout(()=>{this.videoCtx.play();},200)
-			// #endif
 		},
 		methods:{
 			continuePlay(){
+			
 				if(!this.load){
 					setTimeout(()=>{
 						this.load = true

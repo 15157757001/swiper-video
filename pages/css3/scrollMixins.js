@@ -180,7 +180,7 @@ export default {
 				// 往上下拖动超过一半时
 				final_Y = this.distance + (Y>0?1:-1) *this.sysheight
 				changed_Y= final_Y - distance// 计算出需要位置的值
-				translate_Y_origin = `easeOutExpo(t,${distance},${changed_Y},900)` // 运动曲线为easeOutExpo
+				translate_Y_origin = `easeOutExpo(t,${distance},${changed_Y},600)` // 运动曲线为easeOutExpo
 			}
 			let result = BindingX.bind({
 				eventType:'timing',       // 结束的时候是没有任何监听的 用 timing 来做定时的动画
@@ -193,11 +193,11 @@ export default {
 						this.distance = final_Y
 						this.scroll = false
 						if( Math.abs(Y)>this.backDistance||quickMove) {
+							this.index = -this.distance/this.sysheight
 							for (let item of this.videoList) {
 								item.flag = false
 							}
-							this.index = -this.distance/this.sysheight
-							
+							console.log(this.index)
 							this.videoList[this.index].flag = true
 							//加载视频
 							if(this.videoList.length - this.index - 1 <= this.playCount){
@@ -279,11 +279,11 @@ export default {
 						this.distance = final_Y
 						this.scroll = false
 						
+						
+						this.index = -this.distance/this.sysheight
 						for (let item of this.videoList) {
 							item.flag = false
 						}
-						this.index = -this.distance/this.sysheight
-
 						this.videoList[this.index].flag = true
 
 						
@@ -298,9 +298,11 @@ export default {
 			})
 		},
 		pauseVideo(val){
+			console.log(this.oldIndex)
 			 this.videoList[this.oldIndex].initialTime = val
 		},
 		clickVideo(){
+			this.oldIndex = this.index
 			this.videoList[this.index].flag = !this.videoList[this.index].flag
 		},
 		videoPlay(index){
