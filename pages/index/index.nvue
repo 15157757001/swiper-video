@@ -240,7 +240,6 @@
 				})
 				promise.then(res=>{
 					this.$set(this.videoList[index],'flag',!this.videoList[index].flag)
-		
 				})
 			},
 			pauseVideo(val){

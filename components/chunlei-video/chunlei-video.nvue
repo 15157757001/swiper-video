@@ -121,7 +121,7 @@
 							}else{
 								this.videoCtx.pause();
 							}
-						})
+						},300)
 					},1000)
 					
 				}
@@ -150,13 +150,15 @@
 						this.videoCtx.pause();
 						this.$emit('pause',this.time)
 					}
-				})
+				},300)
 				
 			},
 		},
 		watch:{
 			//防抖 防止视频播放暂停太快
-			play: function (newVal,oldVal){if(this.load) this.videoPlay()},
+			play: function (newVal,oldVal){
+				if(this.load) this.videoPlay()
+			},
 			startTime:{
 				immediate: true,
 				handler(newVal,oldVal){
